@@ -20,8 +20,11 @@
  *
  */
 
-/** define the libdir */
+/** define the dirs */
 define('AUTOSYNCMLLIBDIR', "@AUTOSYNCMLLIBDIR@");
+define('BINDIR', "@AUTOSYNCMLLIBDIR@");
+define('ETCDIR', "@ETCDIR@");
+define('SHAREDIR', "@SHAREDIR@");
 
 /** define AUTOSYNCML */
 define('AUTOSYNCML', 1);
