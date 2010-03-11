@@ -198,8 +198,57 @@ class Mailman {
 			throw new Exception("The email ${email} is not a valid email address.");
 		}
 
-		/** Execute the shell command now to add these members */
+		/** Execute the shell command now to add the member */
 		$shellOutput = shell_exec("echo \"${email}\" | add_members ${mode} ${list}");
+
+		/** TODO: Don't return true blindly here, check for "Subscribed: $email" string. */
+		return true;
+	}
+
+	/**
+	 *  Unsubscribe members from a list
+	 *
+	 *  @param String $list  : The name of the mailing list for which we subscribe this user
+	 *  @param Array $emails : An array of emails to subscribe to mailing list
+	 *  @return bool True on sucess
+	 */
+	public function unsubscribeMembers($list, $emails) {
+
+		/** Initialize the result */
+		$result = true;
+
+		/** Iterate throught the emails adding them one by one */
+		foreach($emails as $email) {
+			$localResult = $this->unsubscribeMember($list, $email);
+			$result = $result && $localResult;
+		}
+
+		return $result;
+	}
+
+	/**
+	 *  Unsubscribe a member from a list
+	 *
+	 *  @param String $list  : The name of the mailing list for which we subscribe this user
+	 *  @param Array $email  : A string (email)
+	 *  @return bool True on sucess
+	 */
+	public function unsubscribeMember($list, $email) {
+
+		/** Sanity Check */
+		$lists = $this->getLists();
+		if(!in_array($list, $lists)) {
+			throw new Exception("The list ${list} does not exist, you can't unsubscribe Members if the list doesn't exist.");
+		}
+		if(validateEmailAddress($email) === false) {
+			throw new Exception("The email ${email} is not a valid email address.");
+		}
+
+		/** Execute the shell command now to remove the member */
+		$shellOutput = shell_exec("remove_members ${list} ${email}");
+
+		/** TODO: Don't return true blindly here, check no "No such member: $email" string. */
+		return true;
 	}
 }
 
