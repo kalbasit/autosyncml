@@ -35,6 +35,6 @@ require_once(AUTOSYNCMLLIBDIR . DIRECTORY_SEPARATOR . 'common.inc');
 /** Require classes */
 require_once(AUTOSYNCMLLIBDIR . DIRECTORY_SEPARATOR . 'Person.class.inc');
 require_once(AUTOSYNCMLLIBDIR . DIRECTORY_SEPARATOR . 'People.class.inc');
-require_once(AUTOSYNCMLLIBDIR . DIRECTORY_SEPARATOR . 'MailingList.class.inc');
+require_once(AUTOSYNCMLLIBDIR . DIRECTORY_SEPARATOR . 'Mailman.class.inc');
 
 ?>

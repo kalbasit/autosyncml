@@ -22,7 +22,7 @@
 /** exit if AUTOSYNCML not defined */
 defined('AUTOSYNCML') or die("You cannot use this file, please use @BINDIR@/autosyncml");
 
-class MailingList {
+class Mailman {
 
 	/** The $_lists array */
 	private static $_lists = array();
@@ -33,7 +33,7 @@ class MailingList {
 	/**
 	 *  Construct
 	 *
-	 *  @return MailingList
+	 *  @return Mailman
 	 */
 	public function __construct() {}
 
