@@ -29,7 +29,7 @@ INSTALL=install
 MAKE=make
 GIT=git
 
-TARGETS=
+TARGETS= 	autosyncml.conf
 
 targets:
 	@for target in $(TARGETS) ; \
