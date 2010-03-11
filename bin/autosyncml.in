@@ -1,6 +1,8 @@
 #!/usr/bin/env php
 <?php
 /**
+ * vim:ft=php:fenc=UTF-8:ts=4:sts=4:sw=4:noexpandtab:foldmethod=marker:foldlevel=0:
+ *
  * Copyright (c) 2010 Wael Nasreddine <wael.nasreddine@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
