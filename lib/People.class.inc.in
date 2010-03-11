@@ -22,4 +22,11 @@
 /** exit if AUTOSYNCML not defined */
 defined('AUTOSYNCML') or die("You cannot use this file, please use @BINDIR@/autosyncml");
 
+class people extends ADOdb_Active_Record {
+
+	public $_dbat = 'main';
+
+	public $_table = PEOPLE_SQL_TABLE;
+}
+
 ?>
