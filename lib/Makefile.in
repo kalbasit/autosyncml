@@ -29,7 +29,7 @@ INSTALL=install
 MAKE=make
 GIT=git
 
-TARGETS= 	MailingList.class.inc  main.php
+TARGETS= 	main.php MailingList.class.inc People.class.inc
 
 targets:
 	@for target in $(TARGETS) ; \
