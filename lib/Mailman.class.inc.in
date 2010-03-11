@@ -32,6 +32,10 @@ class Mailman {
 	/** The $_members array */
 	private static $_members = array();
 
+	/** The subscriptions modes */
+	const SUBSCRIPTION_MODE_NON_DIGEST = '-r -';
+	const SUBSCRIPTION_MODE_DIGEST = '-d -';
+
 	/**
 	 *  Construct
 	 *
@@ -122,6 +126,58 @@ class Mailman {
 		}
 
 		return self::$_members;
+	}
+
+	/**
+	 *  A function used to find a members in a mailing list
+	 *
+	 *  @param String $pattern : RegEX pattern used to find a member in lists, preg_match compatible pattern.
+	 *  @return Array : [list] => email
+	 */
+	public function find($pattern) {
+
+		/** Initialize the result array */
+		$foundPatterns = array();
+
+		/** Get the members */
+		$allMembers = $this->getMembers();
+
+		/** Find the pattern */
+		foreach($allMembers as $list => $members) {
+			foreach($members as $member) {
+				/** preg_match this member */
+				preg_match($pattern, $member, $matches);
+				/** If there's any results Add it to big result array */
+				if(count($matches) > 0) {
+					$foundPatterns[$list] = $member;
+				}
+			}
+		}
+
+		return $foundPatterns;
+	}
+
+	/**
+	 *  Subscribe a member to a list
+	 *
+	 *  @param String $list  : The name of the mailing list for which we subscribe this user
+	 *  @param Array $emails : An array of emails to subscribe to mailing list
+	 *  @param String $mode  : The subscription mode, can either be non-digest or digest, Default : non-digest
+	 *  @return bool True on sucess
+	 */
+	public function subscribeMember($list, $emails, $mode = self::SUBSCRIPTION_MODE_NON_DIGEST) {
+
+		/** Sanity Check */
+		$lists = $this->getLists();
+		if(!in_array($list, $lists)) {
+			throw new Exception("The list ${list} does not exist, you can't subscribe Members if the list doesn't exist.");
+		}
+
+		/** Aggregate emails in one string, each on a new line */
+		$emailsString = implode("\n", $emails);
+
+		/** Execute the shell command now to add these members */
+		$shellOutput = shell_exec("echo \"${emailsString}\" | add_members ${mode} ${list}");
 	}
 }
 
