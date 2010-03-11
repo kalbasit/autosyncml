@@ -23,29 +23,29 @@
  * Mysql Configurations
  */
 /** People */
-$peopleSqlAdapter = 'mysql';
-$peopleSqlHost = 'localhost';
-$peopleSqlUser = '';
-$peopleSqlPassword = '';
-$peopleSqlDatabase = '';
+define('PEOPLE_SQL_ADAPTER', 'mysql');
+define('PEOPLE_SQL_HOST', 'localhost');
+define('PEOPLE_SQL_USER', 'autosyncml');
+define('PEOPLE_SQL_PWD', '');
+define('PEOPLE_SQL_DB', 'people');
 
 /** Mailing Lists */
-$mailingListsSqlAdapter = 'sqlite';
-$mailingListsSqlHost = '';
-$mailingListsSqlUser = '';
-$mailingListsSqlPassword = '';
-$mailingListsSqlDatabase = '';
+define('MAILINGLIST_SQL_ADAPTER', 'sqlite');
+define('MAILINGLIST_SQL_HOST', '');
+define('MAILINGLIST_SQL_USER', '');
+define('MAILINGLIST_SQL_PWD', '');
+define('MAILINGLIST_SQL_DB', '@SHAREDIR@/autosyncml/mailinglist.sqlite');
 
 /** People fields */
-$peopleSqlId = 'id';
-$peopleSqlFirstname = 'first_name';
-$peopleSqlLastname = 'last_name';
-$peopleSqlZipcode = 'zip_code';
+define('PEOPLE_SQL_ID', 'Id');
+define('PEOPLE_SQL_FIRSTNAME', 'firstName');
+define('PEOPLE_SQL_LASTNAME', 'lastName');
+define('PEOPLE_SQL_ZIPCODE', 'zipCode');
 
 /** mailing Lists fields */
-$mailingListsSqlId = 'id';
-$mailingListsSqlFirstname = 'first_name';
-$mailingListsSqlLastname = 'last_name';
-$mailingListsSqlZipcode = 'zip_code';
+define('MAILINGLIST_SQL_ID', 'Id');
+define('MAILINGLIST_SQL_FIRSTNAME', 'firstName');
+define('MAILINGLIST_SQL_LASTNAME', 'lastName');
+define('MAILINGLIST_SQL_ZIPCODE', 'zipCode');
 
 ?>

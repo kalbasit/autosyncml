@@ -19,13 +19,28 @@
  *
  */
 
-/** define AUTOSYNCML */
-defined('AUTOSYNCML') or die("You cannot use this file, please use " . BINDIR . "/autosyncml");
+function connectDb($adapter, $host, $user, $pwd, $db) {
 
-/** Require all libraries */
-require_once(AUTOSYNCMLLIBDIR . DIRECTORY_SEPARATOR . 'include.inc');
+	$conn = NewADOConnection($adapter);
+	switch($adapter) {
+	case 'mysql':
+		$conn->connect($host, $user, $pwd, $db);
+		break;
+	case 'sqlite':
+		$conn->PConnect($db);
+		break;
+	}
 
-/** Prepare the database connections */
+	return $conn;
+}
 
+function connectDbs() {
+
+	$main = connectDb(PEOPLE_SQL_ADAPTER, PEOPLE_SQL_HOST, PEOPLE_SQL_USER, PEOPLE_SQL_PWD, PEOPLE_SQL_DB);
+	$copy = connectDb(MAILINGLIST_SQL_ADAPTER, MAILINGLIST_SQL_HOST, MAILINGLIST_SQL_USER, MAILINGLIST_SQL_PWD, MAILINGLIST_SQL_DB);
+
+	ADOdb_Active_Record::SetDatabaseAdapter($main, 'main');
+	ADOdb_Active_Record::SetDatabaseAdapter($copy, 'copy');
+}
 
 ?>
