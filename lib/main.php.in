@@ -19,8 +19,8 @@
  *
  */
 
-/** define AUTOSYNCML */
-defined('AUTOSYNCML') or die("You cannot use this file, please use " . BINDIR . "/autosyncml");
+/** exit if AUTOSYNCML not defined */
+defined('AUTOSYNCML') or die("You cannot use this file, please use @BINDIR@/autosyncml");
 
 /** Require all libraries */
 require_once(AUTOSYNCMLLIBDIR . DIRECTORY_SEPARATOR . 'include.inc');

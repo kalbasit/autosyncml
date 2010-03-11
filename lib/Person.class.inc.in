@@ -19,4 +19,7 @@
  *
  */
 
+/** exit if AUTOSYNCML not defined */
+defined('AUTOSYNCML') or die("You cannot use this file, please use @BINDIR@/autosyncml");
+
 ?>

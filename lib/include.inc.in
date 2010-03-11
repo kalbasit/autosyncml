@@ -22,7 +22,7 @@
 /** define the libdir */
 define('AUTOSYNCMLLIBDIR', "@AUTOSYNCMLLIBDIR@");
 
-/** define AUTOSYNCML */
+/** exit if AUTOSYNCML not defined */
 defined('AUTOSYNCML') or die("You cannot use this file, please use @BINDIR@/autosyncml");
 
 /** Require adodb Active_Record */
