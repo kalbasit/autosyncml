@@ -9,11 +9,12 @@ sharedir=$(prefix)/share
 INSTALL=install
 MAKE=make
 GIT=git
+ECHO=echo
 
 all: prepare-makefiles targets;
 
 update:
-	$(GIT) pull --rebase
+	@$(GIT) pull --rebase
 
 targets: make-bin-targets make-lib-targets make-etc-targets;
 
@@ -57,3 +58,9 @@ clean: prepare-makefiles
 	rm -f bin/Makefile
 	rm -f etc/Makefile
 	rm -f lib/Makefile
+
+help:
+	@$(ECHO) -e \
+		"To install autosyncml, first run make and then run make install\n" \
+		"autosyncml installs by default on /usr/local, it can be changed using prefix=, i.e make prefix=/usr\n" \
+		"If you plan to package it, you can use DESTDIR to install files to a special directory and keep the prefix intact.\n"
