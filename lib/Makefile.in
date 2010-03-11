@@ -47,6 +47,7 @@ install:
 	do \
 		$(INSTALL) -m 644 $${target} $(DESTDIR)$(autosyncmllibdir)/$${target}; \
 	done
+	@cp -a adodb $(DESTDIR)$(autosyncmllibdir)/adodb
 
 clean:
 	@for target in $(TARGETS) ; \
