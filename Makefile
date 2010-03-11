@@ -10,28 +10,34 @@ INSTALL=install
 MAKE=make
 GIT=git
 
-all: targets;
+all: prepare-makefiles targets;
 
 update:
 	$(GIT) pull --rebase
 
-targets: make-bin-targets
-	
-	#make-lib-targets make-etc-targets;
+targets: make-bin-targets make-lib-targets make-etc-targets;
 
-make-bin-targets:
+prepare-makefiles: prepare-bin-makefile prepare-etc-makefile prepare-lib-makefile;
+
+prepare-bin-makefile:
 	@sed -e "s:\(VERSION=\).*:\1$(VERSION):g" bin/Makefile.in > bin/Makefile.tmp
 	@mv bin/Makefile.tmp bin/Makefile
+
+prepare-etc-makefile:
+	@sed -e "s:\(VERSION=\).*:\1$(VERSION):g" lib/Makefile.in > lib/Makefile.tmp
+	@mv lib/Makefile.tmp lib/Makefile
+
+prepare-lib-makefile:
+	@sed -e "s:\(VERSION=\).*:\1$(VERSION):g" etc/Makefile.in > etc/Makefile.tmp
+	@mv etc/Makefile.tmp etc/Makefile
+
+make-bin-targets:
 	$(MAKE) -C bin targets
 
 make-lib-targets:
-	@sed -e "s:\(VERSION=\).*:\1$(VERSION):g" lib/Makefile.in > lib/Makefile.tmp
-	@mv lib/Makefile.tmp lib/Makefile
 	$(MAKE) -C lib targets
 
 make-etc-targets:
-	@sed -e "s:\(VERSION=\).*:\1$(VERSION):g" etc/Makefile.in > etc/Makefile.tmp
-	@mv etc/Makefile.tmp etc/Makefile
 	$(MAKE) -C etc targets
 
 install:
@@ -44,8 +50,7 @@ install:
 	$(MAKE) -C lib install
 	$(MAKE) -C etc install
 
-clean:
-	sed -e "s:\(VERSION=\).*:\1$(VERSION):g" bin/Makefile.in > bin/Makefile
+clean: prepare-makefiles
 	$(MAKE) -C bin clean
 	$(MAKE) -C lib clean
 	$(MAKE) -C etc clean
