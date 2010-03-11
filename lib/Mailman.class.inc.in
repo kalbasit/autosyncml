@@ -259,8 +259,37 @@ class Mailman {
 		/** Execute the shell command now to remove the member */
 		$shellOutput = shell_exec("remove_members ${list} ${email}");
 
-		/** TODO: Don't return true blindly here, check no "No such member: $email" string. */
-		return true;
+		/** check the output for good result */
+		preg_match("#No such member: ${email}#", $shellOutput, $matches);
+		if(count($matches) > 0) {
+			$result = false;
+		} else {
+			$result = true;
+		}
+
+		if($result === true) {
+			/** Remove the member to the members list (faster than a re-read */
+			reset(self::$_members[$list]);
+			while(true) {
+				/** get the key of the current position in a array */
+				$key = key(self::$_members[$list]);
+
+				/** Get out of the loop if we reached the end */
+				if($key === null) {
+					break;
+				}
+
+				/** Remove the current key if the current value is the same as the email. */
+				if(current(self::$_members[$list]) == $email) {
+					unset(self::$_members[$list][$key]);
+					break;
+				} else { /** It doesn't match, go to the next one */
+					next(self::$_members[$list]);
+				}
+			}
+		}
+
+		return $result;
 	}
 }
 
