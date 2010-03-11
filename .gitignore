@@ -1,4 +1,7 @@
-# Ignore Makefiles
-bin/Makefile
-lib/Makefile
-etc/Makefile
+# Ignore output files
+bin/*
+!bin/*.in
+lib/*
+!lib/*.in
+etc/*
+!etc/*.in
