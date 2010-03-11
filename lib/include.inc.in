@@ -26,7 +26,7 @@ defined('AUTOSYNCML') or die("You cannot use this file, please use @BINDIR@/auto
 
 /** Require adodb */
 require_once(AUTOSYNCMLLIBDIR . DIRECTORY_SEPARATOR . 'adodb' . DIRECTORY_SEPARATOR . 'adodb.inc.php');
-require_once(AUTOSYNCMLLIBDIR . DIRECTORY_SEPARATOR . 'adodb' . DIRECTORY_SEPARATOR . 'adodb-active-record.inc.php');
+require_once(AUTOSYNCMLLIBDIR . DIRECTORY_SEPARATOR . 'adodb' . DIRECTORY_SEPARATOR . 'adodb-active-recordx.inc.php');
 
 /** require configs */
 require_once(ETCDIR .  DIRECTORY_SEPARATOR . 'autosyncml.ini');
