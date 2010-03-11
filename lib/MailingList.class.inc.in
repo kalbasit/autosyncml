@@ -22,4 +22,105 @@
 /** exit if AUTOSYNCML not defined */
 defined('AUTOSYNCML') or die("You cannot use this file, please use @BINDIR@/autosyncml");
 
+class MailingList {
+
+	/** The $_lists array */
+	private static $_lists = array();
+
+	/** The $_members array */
+	private static $_members = array();
+
+	/**
+	 *  Construct
+	 *
+	 *  @return MailingList
+	 */
+	public function __construct() {}
+
+	/**
+	 *  Get all lists in mailman
+	 *
+	 *  @return void
+	 */
+	protected function _getAllLists() {
+
+		/** Get the output of list_lists */
+		$shellOutput = shell_exec("list_lists");
+
+		/** Split the output into an array of lines */
+		$shellOutput = explode("\n", $shellOutput);
+
+		/** for each line, take only the name of the list */
+		foreach($shellOutput as $outputLine) {
+			preg_match('#[ \t]*([a-zA-Z0-9_\-]+) - .*#i', $outputLine, $matches);
+			$ml = trim($matches[1]);
+			if(!empty($ml)) {
+				self::$_lists[] = $ml;
+			}
+		}
+
+	}
+
+	/**
+	 *  Get all members in mailman
+	 *
+	 *  @return void
+	 */
+	protected function _getAllMembers() {
+
+		/** Loop on each list getting the members */
+		foreach(self::$_lists as $list) {
+			/** Get the output of list_members ${list} */
+			$shellOutput = shell_exec("list_members ${list}");
+
+			/** Split the output into an array of lines */
+			$shellOutput = explode("\n", $shellOutput);
+
+			/** remove the empty strings */
+			$members = array();
+			foreach($shellOutput as $line) {
+				$line = trim($line);
+				if(!empty($line)) {
+					$members[] = $line;
+				}
+			}
+
+			/** Aggregate the list of members to the list in members */
+			if(!empty($members)) {
+				self::$_members[$list] = $members;
+			}
+		}
+	}
+
+	/**
+	 *  Accessor to the available lists
+	 *
+	 *  @return Array
+	 */
+	public function getLists() {
+
+		/** If the lists hasn't been generated, do that */
+		if(empty(self::$_lists)) {
+			$this->_getAllLists();
+		}
+
+		return self::$_lists;
+	}
+
+	/**
+	 *  Accessor to the available members
+	 *
+	 *  @return Array
+	 */
+	public function getMembers() {
+
+		/** If the members hasn't been generated, do that */
+		if(empty(self::$_members)) {
+			$this->_getAllMembers();
+		}
+
+		return self::$_members;
+	}
+}
+
 ?>
