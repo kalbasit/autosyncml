@@ -158,14 +158,36 @@ class Mailman {
 	}
 
 	/**
-	 *  Subscribe a member to a list
+	 *  Subscribe members to a list
 	 *
 	 *  @param String $list  : The name of the mailing list for which we subscribe this user
 	 *  @param Array $emails : An array of emails to subscribe to mailing list
 	 *  @param String $mode  : The subscription mode, can either be non-digest or digest, Default : non-digest
 	 *  @return bool True on sucess
 	 */
-	public function subscribeMember($list, $emails, $mode = self::SUBSCRIPTION_MODE_NON_DIGEST) {
+	public function subscribeMembers($list, $emails, $mode = self::SUBSCRIPTION_MODE_NON_DIGEST) {
+
+		/** Initialize the result */
+		$result = true;
+
+		/** Iterate throught the emails adding them one by one */
+		foreach($emails as $email) {
+			$localResult = $this->subscribeMember($list, $email, $mode);
+			$result = $result && $localResult;
+		}
+
+		return $result;
+	}
+
+	/**
+	 *  Subscribe a member to a list
+	 *
+	 *  @param String $list  : The name of the mailing list for which we subscribe this user
+	 *  @param Array $email  : A string (email)
+	 *  @param String $mode  : The subscription mode, can either be non-digest or digest, Default : non-digest
+	 *  @return bool True on sucess
+	 */
+	public function subscribeMember($list, $email, $mode = self::SUBSCRIPTION_MODE_NON_DIGEST) {
 
 		/** Sanity Check */
 		$lists = $this->getLists();
@@ -173,11 +195,8 @@ class Mailman {
 			throw new Exception("The list ${list} does not exist, you can't subscribe Members if the list doesn't exist.");
 		}
 
-		/** Aggregate emails in one string, each on a new line */
-		$emailsString = implode("\n", $emails);
-
 		/** Execute the shell command now to add these members */
-		$shellOutput = shell_exec("echo \"${emailsString}\" | add_members ${mode} ${list}");
+		$shellOutput = shell_exec("echo \"${email}\" | add_members ${mode} ${list}");
 	}
 }
 
