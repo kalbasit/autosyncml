@@ -27,7 +27,8 @@ define('PEOPLE_SQL_ADAPTER', 'mysql');
 define('PEOPLE_SQL_HOST', 'localhost');
 define('PEOPLE_SQL_USER', 'autosyncml');
 define('PEOPLE_SQL_PWD', '');
-define('PEOPLE_SQL_DB', 'people');
+define('PEOPLE_SQL_DB', 'autosyncmldb');
+define('PEOPLE_SQL_TABLE', 'people');
 
 /** Mailing Lists */
 define('MAILINGLIST_SQL_ADAPTER', 'sqlite');
@@ -35,6 +36,7 @@ define('MAILINGLIST_SQL_HOST', '');
 define('MAILINGLIST_SQL_USER', '');
 define('MAILINGLIST_SQL_PWD', '');
 define('MAILINGLIST_SQL_DB', '@SHAREDIR@/autosyncml/mailinglist.sqlite');
+define('MAILINGLIST_SQL_TABLE', 'people');
 
 /** People fields */
 define('PEOPLE_SQL_ID', 'Id');
