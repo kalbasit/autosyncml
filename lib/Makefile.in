@@ -38,7 +38,7 @@ targets:
 			-e "s:@AUTOSYNCMLLIBDIR@:$(autosyncmllibdir):g" \
 			-e "s:@SHAREDIR@:$(sharedir):g" \
 			-e "s:@BINDIR@:$(binedir):g" \
-			-e "s:@ETCDIR@:$(etcedir):g" \
+			-e "s:@ETCDIR@:$(etcdir):g" \
 			$${target}.in > $${target}; \
 	done
 
