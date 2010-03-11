@@ -19,6 +19,16 @@
  *
  */
 
+/**
+ * connect To the database.
+ *
+ * @param String $adapter : The adapter to use.
+ * @param String $host    : The host to connect to (for sqlite, this ain't used)
+ * @param String $user    : The user to connect as (for sqlite, this ain't used)
+ * @param String $pwd     : The pwd to connect as (for sqlite, this ain't used)
+ * @param String $db      : The database to use.
+ * @return ADODB_mysql
+ */
 function connectDb($adapter, $host, $user, $pwd, $db) {
 
 	$conn = NewADOConnection($adapter);
@@ -34,6 +44,11 @@ function connectDb($adapter, $host, $user, $pwd, $db) {
 	return $conn;
 }
 
+/**
+ * connect To all databases.
+ *
+ * @return void
+ */
 function connectDbs() {
 
 	$main = connectDb(PEOPLE_SQL_ADAPTER, PEOPLE_SQL_HOST, PEOPLE_SQL_USER, PEOPLE_SQL_PWD, PEOPLE_SQL_DB);
