@@ -1,0 +1,4 @@
+# Ignore Makefiles
+bin/Makefile
+lib/Makefile
+etc/Makefile
