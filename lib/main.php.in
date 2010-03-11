@@ -30,4 +30,7 @@ require_once(AUTOSYNCMLLIBDIR . DIRECTORY_SEPARATOR . 'include.inc');
 /** Prepare the database connections */
 connectDbs();
 
+/** Create the Mailman object */
+$mailman = new Mailman();
+
 ?>

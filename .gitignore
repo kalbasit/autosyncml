@@ -2,8 +2,9 @@
 bin/*
 !bin/*.in
 lib/*
+lin/models/*
 !lib/*.in
-!lib/adodb
+!lib/models/*.in
 !lib/php-activerecord
 etc/*
 !etc/*.in

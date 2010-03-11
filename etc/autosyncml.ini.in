@@ -32,13 +32,13 @@ define('PEOPLE_SQL_PWD', '');
 define('PEOPLE_SQL_DB', 'autosyncmldb');
 define('PEOPLE_SQL_TABLE', 'people');
 
-/** Mailing Lists */
-define('MAILINGLIST_SQL_ADAPTER', 'sqlite');
-define('MAILINGLIST_SQL_HOST', '');
-define('MAILINGLIST_SQL_USER', '');
-define('MAILINGLIST_SQL_PWD', '');
-define('MAILINGLIST_SQL_DB', '@SHAREDIR@/autosyncml/mailinglist.sqlite');
-define('MAILINGLIST_SQL_TABLE', 'people');
+/** Local Copy of People */
+define('PEOPLE_COPY_SQL_ADAPTER', 'sqlite');
+define('PEOPLE_COPY_SQL_HOST', '');
+define('PEOPLE_COPY_SQL_USER', '');
+define('PEOPLE_COPY_SQL_PWD', '');
+define('PEOPLE_COPY_SQL_DB', '@SHAREDIR@/autosyncml/mailinglist.sqlite');
+define('PEOPLE_COPY_SQL_TABLE', 'people');
 
 /** People fields */
 define('PEOPLE_SQL_ID', 'Id');
@@ -46,10 +46,10 @@ define('PEOPLE_SQL_FIRSTNAME', 'firstName');
 define('PEOPLE_SQL_LASTNAME', 'lastName');
 define('PEOPLE_SQL_ZIPCODE', 'zipCode');
 
-/** mailing Lists fields */
-define('MAILINGLIST_SQL_ID', 'Id');
-define('MAILINGLIST_SQL_FIRSTNAME', 'firstName');
-define('MAILINGLIST_SQL_LASTNAME', 'lastName');
-define('MAILINGLIST_SQL_ZIPCODE', 'zipCode');
+/** Local Copy of People fields */
+define('PEOPLE_COPY_SQL_ID', 'Id');
+define('PEOPLE_COPY_SQL_FIRSTNAME', 'firstName');
+define('PEOPLE_COPY_SQL_LASTNAME', 'lastName');
+define('PEOPLE_COPY_SQL_ZIPCODE', 'zipCode');
 
 ?>

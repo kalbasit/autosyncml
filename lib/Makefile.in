@@ -29,9 +29,9 @@ INSTALL=install
 MAKE=make
 GIT=git
 
-TARGETS= 	main.php include.inc common.inc Mailman.class.inc People.class.inc Person.class.inc
+TARGETS= 	main.php include.inc common.inc Mailman.class.inc
 
-targets:
+targets: make-models-targets
 	@for target in $(TARGETS) ; \
 	do \
 		sed -e "s:@VERSION@:$(VERSION):g" \
@@ -42,15 +42,25 @@ targets:
 			$${target}.in > $${target}; \
 	done
 
-install:
+install: make-models-install
 	@for target in $(TARGETS) ; \
 	do \
 		$(INSTALL) -m 644 $${target} $(DESTDIR)$(autosyncmllibdir)/$${target}; \
 	done
-	@cp -a adodb $(DESTDIR)$(autosyncmllibdir)/adodb
+	@cp -a php-activerecord $(DESTDIR)$(autosyncmllibdir)/php-activerecord
+	@rm -rf $(DESTDIR)$(autosyncmllibdir)/php-activerecord/.git
 
-clean:
+clean: make-models-clean
 	@for target in $(TARGETS) ; \
 	do \
 		rm -f $${target}; \
 	done
+
+make-models-targets:
+	@$(MAKE) -C models targets
+
+make-models-install:
+	@$(MAKE) -C models install
+
+make-models-clean:
+	@$(MAKE) -C models clean
