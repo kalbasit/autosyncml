@@ -20,7 +20,7 @@
 VERSION=`git describe --always HEAD`
 
 prefix=/usr/local
-etcdir=/etc
+etcdir=$(prefix)/etc
 bindir=$(prefix)/bin
 libdir=$(prefix)/lib
 autosyncmllibdir=$(libdir)/autosyncml
