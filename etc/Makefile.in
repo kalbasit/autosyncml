@@ -1,0 +1,36 @@
+VERSION=@VERSION@
+
+prefix=/usr/local
+etcdir=/etc
+bindir=$(prefix)/bin
+libdir=$(prefix)/lib
+autosyncmllibdir=$(libdir)/autosyncml
+sharedir=$(prefix)/share
+INSTALL=install
+MAKE=make
+GIT=git
+
+TARGETS=
+
+targets:
+	@for target in $(TARGETS) ; \
+	do \
+		sed -e "s:@VERSION@:$(VERSION):g" \
+			-e "s:@AUTOSYNCMLLIBDIR@:$(autosyncmllibdir):g" \
+			-e "s:@SHAREDIR@:$(sharedir):g" \
+			-e "s:@BINDIR@:$(binedir):g" \
+			-e "s:@ETCDIR@:$(etcedir):g" \
+			$${target}.in > $${target}; \
+	done
+
+install:
+	@for target in $(TARGETS) ; \
+	do \
+		$(INSTALL) -m 644 $${target} $(DESTDIR)$(etcdir)/$${target}; \
+	done
+
+clean:
+	@for target in $(TARGETS) ; \
+	do \
+		rm -f $${target}; \
+	done
