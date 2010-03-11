@@ -19,4 +19,27 @@
  *
  */
 
+/**
+ * Mysql Configurations
+ */
+/** People */
+$peopleSqlAdapter = 'mysql';
+$peopleSqlHost = 'localhost';
+$peopleSqlUser = '';
+$peopleSqlPassword = '';
+$peopleSqlDatabase = '';
+
+/** Mailing Lists */
+$mailingListsSqlAdapter = 'sqlite';
+$mailingListsSqlHost = '';
+$mailingListsSqlUser = '';
+$mailingListsSqlPassword = '';
+$mailingListsSqlDatabase = '';
+
+/** People fields */
+$peopleSqlId = 'id';
+$peopleSqlFirstname = 'first_name';
+$peopleSqlLastname = 'last_name';
+$peopleSqlZipCode = 'zip_code';
+
 ?>

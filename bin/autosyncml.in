@@ -1,3 +1,4 @@
+#!/usr/bin/env php
 <?php
 /**
  * Copyright (c) 2010 Wael Nasreddine <wael.nasreddine@gmail.com>
@@ -18,5 +19,14 @@
  * USA.
  *
  */
+
+/** define the libdir */
+define('AUTOSYNCMLLIBDIR', "@AUTOSYNCMLLIBDIR@");
+
+/** define AUTOSYNCML */
+define('AUTOSYNCML', 1);
+
+/** Require the main file */
+require_once(AUTOSYNCMLLIBDIR . DIRECTORY_SEPARATOR . 'main.php');
 
 ?>
