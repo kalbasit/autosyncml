@@ -40,6 +40,12 @@ $mailingListsSqlDatabase = '';
 $peopleSqlId = 'id';
 $peopleSqlFirstname = 'first_name';
 $peopleSqlLastname = 'last_name';
-$peopleSqlZipCode = 'zip_code';
+$peopleSqlZipcode = 'zip_code';
+
+/** mailing Lists fields */
+$mailingListsSqlId = 'id';
+$mailingListsSqlFirstname = 'first_name';
+$mailingListsSqlLastname = 'last_name';
+$mailingListsSqlZipcode = 'zip_code';
 
 ?>
