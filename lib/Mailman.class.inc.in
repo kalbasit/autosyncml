@@ -209,8 +209,10 @@ class Mailman {
 			$result = false;
 		}
 
-		/** Add the member to the members list (faster than a re-read */
-		self::$_members[$list][] = $email;
+		if($result === true) {
+			/** Add the member to the members list (faster than a re-read */
+			self::$_members[$list][] = $email;
+		}
 
 		return $result;
 	}
