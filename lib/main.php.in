@@ -26,6 +26,6 @@ defined('AUTOSYNCML') or die("You cannot use this file, please use @BINDIR@/auto
 require_once(AUTOSYNCMLLIBDIR . DIRECTORY_SEPARATOR . 'include.inc');
 
 /** Prepare the database connections */
-
+connectDbs();
 
 ?>
