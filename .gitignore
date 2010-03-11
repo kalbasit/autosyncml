@@ -4,6 +4,7 @@ bin/*
 lib/*
 !lib/*.in
 !lib/adodb
+!lib/php-activerecord
 etc/*
 !etc/*.in
 
