@@ -194,6 +194,9 @@ class Mailman {
 		if(!in_array($list, $lists)) {
 			throw new Exception("The list ${list} does not exist, you can't subscribe Members if the list doesn't exist.");
 		}
+		if(validateEmailAddress($email) === false) {
+			throw new Exception("The email ${email} is not a valid email address.");
+		}
 
 		/** Execute the shell command now to add these members */
 		$shellOutput = shell_exec("echo \"${email}\" | add_members ${mode} ${list}");
