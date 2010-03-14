@@ -24,7 +24,30 @@
 /** exit if AUTOSYNCML not defined */
 defined('AUTOSYNCML') or die("You cannot use this file, please use @BINDIR@/autosyncml");
 
-class People extends ActiveRecord\Model {
+class People extends ActiveRecord\Model {}
 
+class MainPeople extends ActiveRecord\Model {
+
+	# The table name
+	public static $table_name = PEOPLE_SQL_TABLE;
+
+	# The primary key
+	public static $primary_key = PEOPLE_SQL_ID;
+
+	# Specify the connection
+	public static $connection = 'main';
 }
+
+class CopyPeople extends ActiveRecord\Model {
+
+	# The table name
+	public static $table_name = PEOPLE_COPY_SQL_TABLE;
+
+	# The primary key
+	public static $primary_key = PEOPLE_COPY_SQL_ID;
+
+	# Specify the connection
+	public static $connection = 'copy';
+}
+
 ?>
