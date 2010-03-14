@@ -43,6 +43,7 @@ targets:
 	done
 
 install:
+	$(INSTALL) -d -m 755 $(DESTDIR)$(autosyncmllibdir)/classes
 	@for target in $(TARGETS) ; \
 	do \
 		$(INSTALL) -m 644 $${target} $(DESTDIR)$(autosyncmllibdir)/classes/$${target}; \

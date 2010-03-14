@@ -43,11 +43,11 @@ targets:
 	done
 
 install:
+	$(INSTALL) -d -m 755 $(DESTDIR)$(autosyncmllibdir)/models
 	@for target in $(TARGETS) ; \
 	do \
-		$(INSTALL) -m 644 $${target} $(DESTDIR)$(autosyncmllibdir)/$${target}; \
+		$(INSTALL) -m 644 $${target} $(DESTDIR)$(autosyncmllibdir)/models/$${target}; \
 	done
-	@cp -a adodb $(DESTDIR)$(autosyncmllibdir)/adodb
 
 clean:
 	@for target in $(TARGETS) ; \
