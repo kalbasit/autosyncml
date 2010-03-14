@@ -29,9 +29,9 @@ INSTALL=install
 MAKE=make
 GIT=git
 
-TARGETS= 	main.php include.php common.php
+TARGETS= 	Logger.class.php Mailman.class.php
 
-targets: make-models-targets make-classes-targets
+targets:
 	@for target in $(TARGETS) ; \
 	do \
 		sed -e "s:@VERSION@:$(VERSION):g" \
@@ -42,34 +42,14 @@ targets: make-models-targets make-classes-targets
 			$${target}.in > $${target}; \
 	done
 
-install: make-models-install make-classes-install
+install:
 	@for target in $(TARGETS) ; \
 	do \
-		$(INSTALL) -m 644 $${target} $(DESTDIR)$(autosyncmllibdir)/$${target}; \
+		$(INSTALL) -m 644 $${target} $(DESTDIR)$(autosyncmllibdir)/classes/$${target}; \
 	done
-	@cp -a php-activerecord $(DESTDIR)$(autosyncmllibdir)/php-activerecord
-	@rm -rf $(DESTDIR)$(autosyncmllibdir)/php-activerecord/.git
 
-clean: make-models-clean make-classes-clean
+clean:
 	@for target in $(TARGETS) ; \
 	do \
 		rm -f $${target}; \
 	done
-
-make-models-targets:
-	@$(MAKE) -C models targets
-
-make-models-install:
-	@$(MAKE) -C models install
-
-make-models-clean:
-	@$(MAKE) -C models clean
-
-make-classes-targets:
-	@$(MAKE) -C classes targets
-
-make-classes-install:
-	@$(MAKE) -C classes install
-
-make-classes-clean:
-	@$(MAKE) -C classes clean

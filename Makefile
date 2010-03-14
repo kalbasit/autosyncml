@@ -48,6 +48,8 @@ prepare-etc-makefile:
 	@mv lib/Makefile.tmp lib/Makefile
 	@sed -e "s:\(VERSION=\).*:\1$(VERSION):g" lib/models/Makefile.in > lib/models/Makefile.tmp
 	@mv lib/models/Makefile.tmp lib/models/Makefile
+	@sed -e "s:\(VERSION=\).*:\1$(VERSION):g" lib/classes/Makefile.in > lib/classes/Makefile.tmp
+	@mv lib/classes/Makefile.tmp lib/classes/Makefile
 
 prepare-lib-makefile:
 	@sed -e "s:\(VERSION=\).*:\1$(VERSION):g" etc/Makefile.in > etc/Makefile.tmp
@@ -80,6 +82,7 @@ clean: prepare-makefiles
 	rm -f etc/Makefile
 	rm -f lib/Makefile
 	rm -f lib/models/Makefile
+	rm -f lib/classes/Makefile
 
 help:
 	@$(ECHO) -e \

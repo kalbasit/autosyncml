@@ -24,19 +24,20 @@
 /** exit if AUTOSYNCML not defined */
 defined('AUTOSYNCML') or die("You cannot use this file, please use @BINDIR@/autosyncml");
 
-/** Require adodb */
-require_once(AUTOSYNCMLLIBDIR . DIRECTORY_SEPARATOR . 'adodb' . DIRECTORY_SEPARATOR . 'adodb.inc.php');
-require_once(AUTOSYNCMLLIBDIR . DIRECTORY_SEPARATOR . 'adodb' . DIRECTORY_SEPARATOR . 'adodb-active-record.inc.php');
+/** Require php-activerecord */
+require_once(AUTOSYNCMLLIBDIR . DIRECTORY_SEPARATOR . 'php-activerecord' . DIRECTORY_SEPARATOR . 'ActiveRecord.php');
 
 /** require configs */
 require_once(ETCDIR .  DIRECTORY_SEPARATOR . 'autosyncml.ini');
 
 /** require common */
-require_once(AUTOSYNCMLLIBDIR . DIRECTORY_SEPARATOR . 'common.inc');
+require_once(AUTOSYNCMLLIBDIR . DIRECTORY_SEPARATOR . 'common.php');
 
 /** Require classes */
-require_once(AUTOSYNCMLLIBDIR . DIRECTORY_SEPARATOR . 'Person.class.inc');
-require_once(AUTOSYNCMLLIBDIR . DIRECTORY_SEPARATOR . 'People.class.inc');
-require_once(AUTOSYNCMLLIBDIR . DIRECTORY_SEPARATOR . 'Mailman.class.inc');
+require_once(AUTOSYNCMLLIBDIR . DIRECTORY_SEPARATOR . 'classes' . DIRECTORY_SEPARATOR . 'Mailman.class.php');
+
+/** Require models */
+require_once(AUTOSYNCMLLIBDIR . DIRECTORY_SEPARATOR . 'models' . DIRECTORY_SEPARATOR . 'Person.class.php');
+require_once(AUTOSYNCMLLIBDIR . DIRECTORY_SEPARATOR . 'models' . DIRECTORY_SEPARATOR . 'People.class.php');
 
 ?>

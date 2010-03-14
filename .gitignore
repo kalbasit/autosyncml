@@ -1,13 +1,17 @@
 # Ignore output files
-bin/*
-!bin/*.in
-lib/*
-lin/models/*
-!lib/*.in
-!lib/models/*.in
-!lib/php-activerecord
-etc/*
-!etc/*.in
+bin/Makefile
+bin/autosyncml
+
+lib/Makefile
+lib/Makefile
+lib/*.php
+lib/models/Makefile
+lib/models/*.php
+lib/classes/Makefile
+lib/classes/*.php
+
+etc/Makefile
+etc/*.ini
 
 # Ignore Zend/Eclipse files
 .buildpath

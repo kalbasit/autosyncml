@@ -24,14 +24,7 @@
 /** exit if AUTOSYNCML not defined */
 defined('AUTOSYNCML') or die("You cannot use this file, please use @BINDIR@/autosyncml");
 
-/** Require all libraries */
-require_once(AUTOSYNCMLLIBDIR . DIRECTORY_SEPARATOR . 'include.php');
+class People extends ActiveRecord\Model {
 
-/** Prepare the database connections */
-$cfg = ActiveRecord\Config::instance();
-$cfg->set_model_directory(AUTOSYNCMLLIBDIR . DIRECTORY_SEPARATOR . 'models');
-
-/** Create the Mailman object */
-$mailman = new Mailman();
-
+}
 ?>
