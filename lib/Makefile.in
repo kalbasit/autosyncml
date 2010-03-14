@@ -47,8 +47,7 @@ install: make-models-install make-classes-install
 	do \
 		$(INSTALL) -m 644 $${target} $(DESTDIR)$(autosyncmllibdir)/$${target}; \
 	done
-	@cp -a php-activerecord $(DESTDIR)$(autosyncmllibdir)/php-activerecord
-	@rm -rf $(DESTDIR)$(autosyncmllibdir)/php-activerecord/.git
+	@cp -a adodb $(DESTDIR)$(autosyncmllibdir)/adodb
 
 clean: make-models-clean make-classes-clean
 	@for target in $(TARGETS) ; \
