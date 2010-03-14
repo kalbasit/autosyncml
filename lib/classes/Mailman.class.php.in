@@ -32,6 +32,9 @@ class Mailman {
 	/** The $_members array */
 	private static $_members = array();
 
+	/** The logger */
+	protected $_logger;
+
 	/** The subscriptions modes */
 	const SUBSCRIPTION_MODE_NON_DIGEST = '-r -';
 	const SUBSCRIPTION_MODE_DIGEST = '-d -';
@@ -41,7 +44,10 @@ class Mailman {
 	 *
 	 *  @return Mailman
 	 */
-	public function __construct() {}
+	public function __construct($logger) {
+
+		$this->_logger = $logger;
+	}
 
 	/**
 	 *  Get all lists in mailman
@@ -49,6 +55,9 @@ class Mailman {
 	 *  @return void
 	 */
 	protected function _getAllLists() {
+
+		/** log the Event */
+		$this->_logger('GET_ALL_LISTS', '_getAllLists() has been called.');
 
 		/** Get the output of list_lists */
 		$shellOutput = shell_exec("list_lists");
@@ -73,6 +82,9 @@ class Mailman {
 	 *  @return void
 	 */
 	protected function _getAllMembers() {
+
+		/** log the Event */
+		$this->_logger('GET_ALL_MEMBERS', '_getAllMembers() has been called.');
 
 		/** Loop on each list getting the members */
 		foreach(self::$_lists as $list) {
@@ -198,6 +210,9 @@ class Mailman {
 			throw new Exception("The email ${email} is not a valid email address.");
 		}
 
+		/** log the Event */
+		$this->_logger('SUBSCRIBE_MEMBER', "subscribeMember() been called with \$list='${list}', \$email='${email}', \$mode='${mode}',");
+
 		/** Execute the shell command now to add the member */
 		$shellOutput = shell_exec("echo \"${email}\" | add_members ${mode} ${list}");
 
@@ -212,6 +227,12 @@ class Mailman {
 		if($result === true) {
 			/** Add the member to the members list (faster than a re-read */
 			self::$_members[$list][] = $email;
+
+			/** log the Event */
+			$this->_logger('SUBSCRIBE_MEMBER', "The member ${email} has been subscribed.");
+		} else {
+			/** log the Event */
+			$this->_logger('SUBSCRIBE_MEMBER', "The member ${email} has not been subscribed, output: ${shellOutput}");
 		}
 
 		return $result;
@@ -256,6 +277,9 @@ class Mailman {
 			throw new Exception("The email ${email} is not a valid email address.");
 		}
 
+		/** log the Event */
+		$this->_logger('UNSUBSCRIBE_MEMBER', "unsubscribeMember() been called with \$list='${list}', \$email='${email}'");
+
 		/** Execute the shell command now to remove the member */
 		$shellOutput = shell_exec("remove_members ${list} ${email}");
 
@@ -287,6 +311,12 @@ class Mailman {
 					next(self::$_members[$list]);
 				}
 			}
+
+			/** log the Event */
+			$this->_logger('UNSUBSCRIBE_MEMBER', "The member ${email} has been unsubscribed.");
+		} else {
+			/** log the Event */
+			$this->_logger('UNSUBSCRIBE_MEMBER', "The member ${email} has not been unsubscribed, output: ${shellOutput}");
 		}
 
 		return $result;
