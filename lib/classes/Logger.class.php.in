@@ -29,11 +29,26 @@ class Logger {
 	/** The entire log array */
 	protected static $_log = array();
 
+	/** The log instance */
+	protected static $_instance = null;
+
+	/** class name */
+	protected static $_className = 'Logger';
+
 	/** The date format */
 	protected $format = "Y-m-d H:i:s";
 
 	/** Construct */
-	public function __construct() {}
+	protected function __construct() {}
+
+	public static function getInstance() {
+
+		if(self::$_instance === null) {
+			self::$_instance = new self::$_className();
+		}
+
+		return self::$_instance;
+	}
 
 	/** logEvent */
 	public function logEvent($type, $message) {

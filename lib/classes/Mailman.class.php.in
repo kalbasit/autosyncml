@@ -44,9 +44,9 @@ class Mailman {
 	 *
 	 *  @return Mailman
 	 */
-	public function __construct($logger) {
+	public function __construct() {
 
-		$this->_logger = $logger;
+		$this->_logger = Logger::getInstance();
 	}
 
 	/**
