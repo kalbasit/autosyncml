@@ -35,10 +35,11 @@ require_once(ETCDIR .  DIRECTORY_SEPARATOR . 'autosyncml.ini');
 require_once(AUTOSYNCMLLIBDIR . DIRECTORY_SEPARATOR . 'common.php');
 
 /** Require classes */
+require_once(AUTOSYNCMLLIBDIR . DIRECTORY_SEPARATOR . 'classes' . DIRECTORY_SEPARATOR . 'Logger.class.php');
 require_once(AUTOSYNCMLLIBDIR . DIRECTORY_SEPARATOR . 'classes' . DIRECTORY_SEPARATOR . 'Mailman.class.php');
 
 /** Require models */
-require_once(AUTOSYNCMLLIBDIR . DIRECTORY_SEPARATOR . 'models' . DIRECTORY_SEPARATOR . 'Person.class.php');
 require_once(AUTOSYNCMLLIBDIR . DIRECTORY_SEPARATOR . 'models' . DIRECTORY_SEPARATOR . 'People.class.php');
+//require_once(AUTOSYNCMLLIBDIR . DIRECTORY_SEPARATOR . 'models' . DIRECTORY_SEPARATOR . 'Person.class.php');
 
 ?>
