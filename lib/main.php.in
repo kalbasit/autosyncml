@@ -28,10 +28,12 @@ defined('AUTOSYNCML') or die("You cannot use this file, please use @BINDIR@/auto
 require_once(AUTOSYNCMLLIBDIR . DIRECTORY_SEPARATOR . 'include.php');
 
 /** Prepare the database connections */
-$cfg = ActiveRecord\Config::instance();
-$cfg->set_model_directory(AUTOSYNCMLLIBDIR . DIRECTORY_SEPARATOR . 'models');
+connectDbs();
 
 /** Create the Mailman object */
 $mailman = new Mailman();
+
+/** Get the People object */
+$mainPeople = new MainPeople();
 
 ?>
