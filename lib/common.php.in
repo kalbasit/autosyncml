@@ -56,9 +56,6 @@ function connectDbs() {
 	$main = connectDb(PEOPLE_SQL_ADAPTER, PEOPLE_SQL_HOST, PEOPLE_SQL_USER, PEOPLE_SQL_PWD, PEOPLE_SQL_DB);
 	$copy = connectDb(PEOPLE_COPY_SQL_ADAPTER, PEOPLE_COPY_SQL_HOST, PEOPLE_COPY_SQL_USER, PEOPLE_COPY_SQL_PWD, PEOPLE_COPY_SQL_DB);
 
-	define('MAIN_CONN', $mail);
-	define('COPY_CONN', $copy);
-
 	ADOdb_Active_Record::SetDatabaseAdapter($main, 'main');
 	ADOdb_Active_Record::SetDatabaseAdapter($copy, 'copy');
 }
