@@ -143,6 +143,7 @@ class Person {
 		if($currentSubscriptions !== null && is_array($currentSubscriptions)) {
 			foreach($currentSubscriptions as $currentSubscription) {
 				if(in_array($currentSubscription, $lists) === false) {
+					$this->_logger->logEvent('UNSUBSCRIBE_USER', "Unsubscribing the user from the list ${currentSubscription}", true);
 					$mailman->unsubscribeMember($currentSubscription, $this->_email);
 				}
 			}
@@ -152,6 +153,8 @@ class Person {
 		foreach($lists as $list) {
 			if($currentSubscriptions === null || (is_array($currentSubscriptions) && in_array($list, $currentSubscriptions) === false)) {
 				$mailman->subscribeMember($list, $this->_email);
+			} else {
+				$this->_logger->logEvent('SUBSCRIBE_USER', "The user " . $this->_email . " has been skiped, he's already subscribed to the list ${list}", true);
 			}
 		}
 	}

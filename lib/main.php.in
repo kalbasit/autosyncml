@@ -73,7 +73,7 @@ foreach($mainPeopleSearch as $people) {
 
 	$subscribedLists = $person->getCurrentList();
 	if(empty($subscribedLists)) {
-		$logger->logEvent('USER_UNKNOWN', "The user ${email} is not subscribed to any existing list, we will subscribe him to his list.");
+		$logger->logEvent('USER_UNKNOWN', "The user ${email} is not subscribed to any existing list, we will subscribe him to his list.", true);
 		$subscribedListsList = null;
 	} else {
 		/** Initialize the lists array */
@@ -85,7 +85,7 @@ foreach($mainPeopleSearch as $people) {
 		}
 
 		/** Log the Event */
-		$logger->logEvent('USER_KNOWN', "The user is known and subscribed to the following lists: " . implode(', ', $subscribedListsList));
+		$logger->logEvent('USER_KNOWN', "The user is known and subscribed to the following lists: " . implode(', ', $subscribedListsList), true);
 	}
 
 	/** Subscribe / Unsubscibe the user if necessary */
