@@ -249,10 +249,10 @@ class Mailman {
 			self::$_members[$list][] = $email;
 
 			/** log the Event */
-			$this->_logger->logEvent('SUBSCRIBE_MEMBER', "The member ${email} has been subscribed.");
+			$this->_logger->logEvent('SUBSCRIBE_MEMBER', "The member ${email} has been subscribed to the list ${list}.");
 		} else {
 			/** log the Event */
-			$this->_logger->logEvent('SUBSCRIBE_MEMBER', "The member ${email} has not been subscribed, output: ${shellOutput}");
+			$this->_logger->logEvent('SUBSCRIBE_MEMBER', "The member ${email} has not been subscribed to the list ${list}, output: ${shellOutput}");
 		}
 
 		return $result;
@@ -333,10 +333,10 @@ class Mailman {
 			}
 
 			/** log the Event */
-			$this->_logger->logEvent('UNSUBSCRIBE_MEMBER', "The member ${email} has been unsubscribed.");
+			$this->_logger->logEvent('UNSUBSCRIBE_MEMBER', "The member ${email} has been unsubscribed from the list ${list}.");
 		} else {
 			/** log the Event */
-			$this->_logger->logEvent('UNSUBSCRIBE_MEMBER', "The member ${email} has not been unsubscribed, output: ${shellOutput}");
+			$this->_logger->logEvent('UNSUBSCRIBE_MEMBER', "The member ${email} has not been unsubscribed from the list ${list}, output: ${shellOutput}");
 		}
 
 		return $result;
