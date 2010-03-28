@@ -112,29 +112,46 @@ class Person {
 		return $matches;
 	}
 
-	public function getList() {
+	public function getLists() {
 
 		/** Create a new instance of the departments class */
 		$departments = new Departements();
 
-		$list = $departments->getDepartementCodeByZipCode($this->_postalCode);
+		/** Initialize the lists */
+		$lists = array();
 
-		if($list === false) {
+		$dept = $departments->getDepartementCodeByZipCode($this->_postalCode);
+
+		if($dept === false) {
 			throw new Exception("The postal code does not correspond to any departement and so the list can't be determined.");
+		} else {
+			$lists[] = $dept;
 		}
 
-		return $list;
+		return $lists;
 	}
 
-	public function subscribeMember() {
+	public function ensureSubscriptions($currentSubscriptions = null) {
 
 		/** Get an instance of the Mailman class */
 		$mailman = Mailman::getInstance();
 
-		/** Subscribe this member */
-		$result = $mailman->subscribeMember($this->getList(), $this->_email);
+		/** The lists the user should be subscribed to */
+		$lists = $this->getLists();
 
-		return $result;
+		/** If the current Subscriptions is not null, un-subscribe the user from anything other than where he supposed to be */
+		if($currentSubscriptions !== null && is_array($currentSubscriptions)) {
+			foreach($currentSubscriptions as $currentSubscription) {
+				if(in_array($currentSubscription, $lists) === false) {
+					$mailman->unsubscribeMember($currentSubscription, $this->_email);
+				}
+			}
+		}
+
+		/** Subscribe this member */
+		foreach($lists as $list) {
+			$mailman->subscribeMember($list, $this->_email);
+		}
 	}
 }
 ?>

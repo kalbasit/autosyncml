@@ -72,15 +72,30 @@ foreach($mainPeopleSearch as $people) {
 		continue;
 	}
 
-	$list = $person->getCurrentList();
-	if(empty($list)) {
-		try {
-			$person->subscribeMember();
-		} catch(Exception $e) {
-			$logger->logEvent('EXCEPTION', $e->getMessage());
-			continue;
+	$subscribedLists = $person->getCurrentList();
+	if(empty($subscribedLists)) {
+		$logger->logEvent('USER_UNKNOWN', "The user ${email} is not subscribed to any existing list, we will subscribe him to his list.");
+		$subscribedListsList = null;
+	} else {
+		/** Initialize the lists array */
+		$subscribedListsList = array();
+
+		/** Get all the lists to which the user is subscribed */
+		foreach($subscribedLists as $subscribedList => $subscribedEmail) {
+			$subscribedListsList[] = $subscribedList;
 		}
-	} /** TODO: If the list is not empty, verify if it has changed, if it did, it should be migrated */
+
+		/** Log the Event */
+		$logger->logEvent('USER_KNOWN', "The user is known and subscribed to the following lists: " . implode(', ', $subscribedListsList));
+	}
+
+	/** Subscribe / Unsubscibe the user if necessary */
+	try {
+		$person->ensureSubscriptions($subscribedListsList);
+	} catch(Exception $e) {
+		$logger->logEvent('EXCEPTION', $e->getMessage());
+		continue;
+	}
 }
 
 /** Send the logs */
