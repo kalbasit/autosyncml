@@ -103,4 +103,16 @@ function validateEmailAddress($email) {
 	return true;
 }
 
+function pp($message, $object) {
+	echo "==> " . $message . "\n";
+	echo "\n";
+	print_r($object);
+	echo "\n";
+}
+
+function pe($message, $object) {
+	pp($message, $object);
+	exit();
+}
+
 ?>
