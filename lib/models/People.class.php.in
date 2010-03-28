@@ -24,7 +24,26 @@
 /** exit if AUTOSYNCML not defined */
 defined('AUTOSYNCML') or die("You cannot use this file, please use @BINDIR@/autosyncml");
 
-class People extends ADOdb_Active_Record {}
+class People extends ADOdb_Active_Record {
+
+	public function toString() {
+
+		/** Initialize the output */
+		$output = '';
+
+		/** Get the attributes */
+		$attributes = $this->getAttributeNames();
+
+		/** Generate the string */
+		$sep = "";
+		foreach($attributes as $attribute) {
+			$output .= $sep . $attribute . ' = ' . $this->$attribute;
+			$sep = ", ";
+		}
+
+		return $output;
+	}
+}
 
 class MainPeople extends People {
 
