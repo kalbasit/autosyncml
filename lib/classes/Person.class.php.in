@@ -114,21 +114,29 @@ class Person {
 
 	public function getLists() {
 
-		/** Create a new instance of the departments class */
-		$departments = new Departements();
-
 		/** Initialize the lists */
 		$lists = array();
 
-		$dept = $departments->getDepartementCodeByZipCode($this->_postalCode);
-
-		if($dept === false) {
-			throw new Exception("The postal code does not correspond to any departement and so the list can't be determined.");
-		} else {
-			$lists[] = $dept;
-		}
+		/** get the list by zip code */
+		$lists[] = $this->_getListByPostCode();
 
 		return $lists;
+	}
+
+	protected function _getListByPostCode() {
+
+		/** Create a new instance of the departments class */
+		$departments = new Departements();
+
+		/** get the list */
+		$list = $departments->getDepartementCodeByZipCode($this->_postalCode);
+
+		/** If there's no list found, suppose it's lebanon */
+		if($list === false) {
+			$list = 'Liban';
+		}
+
+		return $list;
 	}
 
 	public function ensureSubscriptions($currentSubscriptions = null) {
