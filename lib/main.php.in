@@ -24,6 +24,9 @@
 /** exit if AUTOSYNCML not defined */
 defined('AUTOSYNCML') or die("You cannot use this file, please use @BINDIR@/autosyncml");
 
+/** Define the copyright */
+define('COPYRIGHT', 'AutosyncML version @VERSION@ by Wael Nasreddine <wael.nasreddine@gmail.com>');
+
 /** Require all libraries */
 require_once(AUTOSYNCMLLIBDIR . DIRECTORY_SEPARATOR . 'include.php');
 
@@ -80,6 +83,7 @@ foreach($mainPeopleSearch as $people) {
 	} /** TODO: If the list is not empty, verify if it has changed, if it did, it should be migrated */
 }
 
-echo $logger->getLog();
+/** Send the logs */
+$logger->sendLog();
 
 ?>

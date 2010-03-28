@@ -75,5 +75,29 @@ class Logger {
 
 		return $log;
 	}
+
+	public function sendLog() {
+
+		/** Mark the end of the logs */
+		$this->logEvent('LOG_CLOSED', 'the log has been closed.');
+
+		/** get the email */
+		$email = new Email();
+
+		/** Set the receipient */
+		$email->addRecipient(LOG_RECIPIENT);
+
+		/** Set the subject */
+		$email->setSubject('AutosyncML LOG ' . date($this->format));
+
+		/** Set the message */
+		$message = $this->getLog() . "\n\n-- \n" . COPYRIGHT;
+
+		/** Set the email body */
+		$email->setMessage($message);
+
+		/** Send the email */
+		$email->send();
+	}
 }
 ?>

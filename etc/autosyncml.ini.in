@@ -54,4 +54,9 @@ define('PEOPLE_COPY_SQL_LASTNAME', 'lastName');
 define('PEOPLE_COPY_SQL_EMAIL', 'email');
 define('PEOPLE_COPY_SQL_ZIPCODE', 'zipCode');
 
+/**
+ * Email Configurations
+ */
+define('LOG_RECIPIENT', 'webmaster@aulf.org');
+
 ?>
