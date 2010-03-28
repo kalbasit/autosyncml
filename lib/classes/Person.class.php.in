@@ -150,7 +150,9 @@ class Person {
 
 		/** Subscribe this member */
 		foreach($lists as $list) {
-			$mailman->subscribeMember($list, $this->_email);
+			if($currentSubscriptions === null || (is_array($currentSubscriptions) && in_array($list, $currentSubscriptions) === false)) {
+				$mailman->subscribeMember($list, $this->_email);
+			}
 		}
 	}
 }
