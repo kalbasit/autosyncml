@@ -44,12 +44,14 @@ define('PEOPLE_COPY_SQL_TABLE', 'people');
 define('PEOPLE_SQL_ID', 'Id');
 define('PEOPLE_SQL_FIRSTNAME', 'firstName');
 define('PEOPLE_SQL_LASTNAME', 'lastName');
+define('PEOPLE_SQL_EMAIL', 'email');
 define('PEOPLE_SQL_ZIPCODE', 'zipCode');
 
 /** Local Copy of People fields */
 define('PEOPLE_COPY_SQL_ID', 'Id');
 define('PEOPLE_COPY_SQL_FIRSTNAME', 'firstName');
 define('PEOPLE_COPY_SQL_LASTNAME', 'lastName');
+define('PEOPLE_COPY_SQL_EMAIL', 'email');
 define('PEOPLE_COPY_SQL_ZIPCODE', 'zipCode');
 
 ?>
