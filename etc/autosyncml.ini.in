@@ -33,12 +33,12 @@ define('PEOPLE_SQL_DB', 'autosyncmldb');
 define('PEOPLE_SQL_TABLE', 'people');
 
 /** Local Copy of People */
-define('PEOPLE_COPY_SQL_ADAPTER', 'sqlite');
-define('PEOPLE_COPY_SQL_HOST', '');
-define('PEOPLE_COPY_SQL_USER', '');
-define('PEOPLE_COPY_SQL_PWD', '');
-define('PEOPLE_COPY_SQL_DB', '@SHAREDIR@/autosyncml/mailinglist.sqlite');
-define('PEOPLE_COPY_SQL_TABLE', 'people');
+//define('PEOPLE_COPY_SQL_ADAPTER', 'sqlite');
+//define('PEOPLE_COPY_SQL_HOST', '');
+//define('PEOPLE_COPY_SQL_USER', '');
+//define('PEOPLE_COPY_SQL_PWD', '');
+//define('PEOPLE_COPY_SQL_DB', '@SHAREDIR@/autosyncml/mailinglist.sqlite');
+//define('PEOPLE_COPY_SQL_TABLE', 'people');
 
 /** People fields */
 define('PEOPLE_SQL_ID', 'Id');
@@ -48,11 +48,11 @@ define('PEOPLE_SQL_EMAIL', 'email');
 define('PEOPLE_SQL_ZIPCODE', 'zipCode');
 
 /** Local Copy of People fields */
-define('PEOPLE_COPY_SQL_ID', 'Id');
-define('PEOPLE_COPY_SQL_FIRSTNAME', 'firstName');
-define('PEOPLE_COPY_SQL_LASTNAME', 'lastName');
-define('PEOPLE_COPY_SQL_EMAIL', 'email');
-define('PEOPLE_COPY_SQL_ZIPCODE', 'zipCode');
+//define('PEOPLE_COPY_SQL_ID', 'Id');
+//define('PEOPLE_COPY_SQL_FIRSTNAME', 'firstName');
+//define('PEOPLE_COPY_SQL_LASTNAME', 'lastName');
+//define('PEOPLE_COPY_SQL_EMAIL', 'email');
+//define('PEOPLE_COPY_SQL_ZIPCODE', 'zipCode');
 
 /**
  * Email Configurations

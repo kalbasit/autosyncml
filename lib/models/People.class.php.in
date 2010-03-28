@@ -38,16 +38,16 @@ class MainPeople extends People {
 	public $_dbat = 'main';
 }
 
-class CopyPeople extends People {
-
-	# The table name
-	public $_table = PEOPLE_COPY_SQL_TABLE;
-
-	# The primary key
-	public static $primary_key = PEOPLE_COPY_SQL_ID;
-
-	# Specify the connection
-	public $_dbat = 'copy';
-}
+//class CopyPeople extends People {
+//
+//	# The table name
+//	public $_table = PEOPLE_COPY_SQL_TABLE;
+//
+//	# The primary key
+//	public static $primary_key = PEOPLE_COPY_SQL_ID;
+//
+//	# Specify the connection
+//	public $_dbat = 'copy';
+//}
 
 ?>

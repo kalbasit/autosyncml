@@ -41,7 +41,7 @@ $logger = Logger::getInstance();
 
 /** Get the People object */
 $mainPeople = new MainPeople();
-$copyPeople = new CopyPeople();
+//$copyPeople = new CopyPeople();
 
 /** Define the keys to use in adodb, must be lower case */
 $id_tag = strtolower(PEOPLE_SQL_ID);
