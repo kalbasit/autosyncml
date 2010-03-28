@@ -35,6 +35,12 @@ class Mailman {
 	/** The logger */
 	protected $_logger;
 
+	/** class name */
+	protected static $_className = 'Mailman';
+
+	/** The Mailman instance */
+	protected static $_instance = null;
+
 	/** The subscriptions modes */
 	const SUBSCRIPTION_MODE_NON_DIGEST = '-r -';
 	const SUBSCRIPTION_MODE_DIGEST = '-d -';
@@ -44,9 +50,18 @@ class Mailman {
 	 *
 	 *  @return Mailman
 	 */
-	public function __construct() {
+	protected function __construct() {
 
 		$this->_logger = Logger::getInstance();
+	}
+
+	public static function getInstance() {
+
+		if(self::$_instance === null || !(self::$_instance instanceof self::$_className)) {
+			self::$_instance = new self::$_className();
+		}
+
+		return self::$_instance;
 	}
 
 	/**
