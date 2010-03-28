@@ -107,7 +107,7 @@ class Person {
 	public function getCurrentList() {
 
 		$mailman = Mailman::getInstance();
-		$matches = $mailman->find('#' . $this->_email . '#');
+		$matches = $mailman->find('#' . mb_strtolower($this->_email, 'UTF-8') . '#');
 
 		return $matches;
 	}
