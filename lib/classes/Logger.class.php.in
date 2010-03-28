@@ -55,22 +55,26 @@ class Logger {
 	}
 
 	/** logEvent */
-	public function logEvent($type, $message) {
+	public function logEvent($type, $message, $debug = false) {
 
+		/** Record the event */
 		$event = array(
 			'date' => date($this->format),
 			'type' => $type,
 			'message' => $message,
+			'debug' => $debug,
 		);
 
 		self::$_log[] = $event;
 	}
 
-	public function getLog() {
+	public function getLog($debug = false) {
 
 		$log = '';
 		foreach(self::$_log as $event) {
-			$log .= '[' . $event['date'] . '] ' . $event['type'] . ': ' . $event['message'] . "\n";
+			if(($debug === false && $event['debug'] === false) || $debug === true) {
+				$log .= '[' . $event['date'] . '] ' . $event['type'] . ': ' . $event['message'] . "\n";
+			}
 		}
 
 		return $log;

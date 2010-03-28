@@ -51,11 +51,10 @@ $email_tag = strtolower(PEOPLE_SQL_EMAIL);
 $postalcode_tag = strtolower(PEOPLE_SQL_ZIPCODE);
 
 /** Find all people */
-$logger->logEvent('GET_ALL_ROWS_FROM_ADHERENT', 'Calling the find() function of the mainPeople model');
+$logger->logEvent('GET_ALL_ROWS_FROM_ADHERENT', 'Calling the find() function of the mainPeople model', true);
 $mainPeopleSearch = $mainPeople->Find('');
 
 foreach($mainPeopleSearch as $people) {
-
 	/** Get the elements from the mainPeopleSearch */
 	$id = $people->$id_tag;
 	$firstName = $people->$firstname_tag;
