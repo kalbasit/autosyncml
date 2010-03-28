@@ -31,7 +31,7 @@ require_once(AUTOSYNCMLLIBDIR . DIRECTORY_SEPARATOR . 'include.php');
 connectDbs();
 
 /** Create the Mailman object */
-$mailman = new Mailman();
+$mailman = Mailman::getInstance();
 
 /** Get the People object */
 $mainPeople = new MainPeople();
