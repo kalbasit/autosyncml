@@ -33,7 +33,53 @@ connectDbs();
 /** Create the Mailman object */
 $mailman = Mailman::getInstance();
 
+/** Get the logger */
+$logger = Logger::getInstance();
+
 /** Get the People object */
 $mainPeople = new MainPeople();
+$copyPeople = new CopyPeople();
+
+/** Define the keys to use in adodb, must be lower case */
+$id_tag = strtolower(PEOPLE_SQL_ID);
+$firstname_tag = strtolower(PEOPLE_SQL_FIRSTNAME);
+$lastname_tag = strtolower(PEOPLE_SQL_LASTNAME);
+$email_tag = strtolower(PEOPLE_SQL_EMAIL);
+$postalcode_tag = strtolower(PEOPLE_SQL_ZIPCODE);
+
+/** Find all people */
+$logger->logEvent('GET_ALL_ROWS_FROM_ADHERENT', 'Calling the find() function of the mainPeople model');
+$mainPeopleSearch = $mainPeople->Find('');
+
+foreach($mainPeopleSearch as $people) {
+
+	/** Get the elements from the mainPeopleSearch */
+	$id = $people->$id_tag;
+	$firstName = $people->$firstname_tag;
+	$lastName = $people->$lastname_tag;
+	$email = $people->$email_tag;
+	$postalCode = $people->$postalcode_tag;
+
+	/** Create a person */
+	$logger->logEvent('CREATE_PERSON', "id=${id}, firstName=${firstName}, email=${email}, postalCode=$postalCode");
+	try {
+		$person = new Person($id, $firstName, $lastName, $email, $postalCode);
+	} catch(Exception $e) {
+		$logger->logEvent('EXCEPTION', $e->getMessage());
+		continue;
+	}
+
+	$list = $person->getCurrentList();
+	if(empty($list)) {
+		try {
+			$person->subscribeMember();
+		} catch(Exception $e) {
+			$logger->logEvent('EXCEPTION', $e->getMessage());
+			continue;
+		}
+	} /** TODO: If the list is not empty, verify if it has changed, if it did, it should be migrated */
+}
+
+echo $logger->getLog();
 
 ?>
