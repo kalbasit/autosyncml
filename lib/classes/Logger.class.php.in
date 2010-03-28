@@ -58,7 +58,7 @@ class Logger {
 	public function logEvent($type, $message, $debug = false) {
 
 		/** Undebug the previous CREATE_USER if necessary */
-		if($type != 'CREATE_PERSON' && $debug === false) {
+		if($type != 'CREATE_PERSON' && $type != 'LOG_STARTED' && $type != 'LOG_CLOSED' && $debug === false) {
 			$this->unDebugLast('CREATE_PERSON');
 		}
 
