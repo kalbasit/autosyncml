@@ -1,4 +1,4 @@
-#!@PHPEXEC@
+#!@PHPEXEC@ -d safe_mode=Off
 <?php
 /**
  * vim:ft=php:fenc=UTF-8:ts=4:sts=4:sw=4:noexpandtab:foldmethod=marker:foldlevel=0:
