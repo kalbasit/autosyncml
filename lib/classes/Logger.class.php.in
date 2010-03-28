@@ -39,7 +39,11 @@ class Logger {
 	protected $format = "Y-m-d H:i:s";
 
 	/** Construct */
-	protected function __construct() {}
+	protected function __construct() {
+		
+		/** Mark the log has started */
+		$this->logEvent('LOG_STARTED', 'The log has been opened');
+	}
 
 	public static function getInstance() {
 
