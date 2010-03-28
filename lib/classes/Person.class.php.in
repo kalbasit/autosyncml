@@ -44,7 +44,7 @@ class Person {
 	public function getCurrentList() {
 
 		$mailman = Mailman::getInstance();
-		$matches = $mailman->find('#' . $this->email . '#');
+		$matches = $mailman->find('#' . $this->_email . '#');
 
 		return $matches;
 	}
