@@ -26,19 +26,82 @@ defined('AUTOSYNCML') or die("You cannot use this file, please use @BINDIR@/auto
 
 class Person {
 
+	/** This person's properties */
 	private $_id;
 	private $_firstName;
 	private $_lastName;
 	private $_email;
 	private $_postalCode;
 
+	/** The logger */
+	protected $_logger;
+
+	/**
+	 * Constructor
+	 *
+	 * @param Int      $id          : The id in the database.
+	 * @param String   $firstName   : The firstName
+	 * @param String   $lastName    : The lastName
+	 * @param String   $email       : The email
+	 * @param Int      $postalCode  : French postal code, 5 or 6 chars
+	 * @return Person
+	 */
 	public function __construct($id, $firstName, $lastName, $email, $postalCode) {
 
+		/** Get the logger */
+		$this->_logger = Logger::getInstance();
+
+		/** Validate the data */
+		$this->validateData($id, $firstName, $lastName, $email, $postalCode);
+
+		/** Record the properties */
 		$this->_id = $id;
 		$this->_firstName = $firstName;
 		$this->_lastName = $lastName;
 		$this->_email = $email;
 		$this->_postalCode = $postalCode;
+	}
+
+	/**
+	 * This function validated the data, throws exception where it's necessary
+	 *
+	 * @param Int      $id          : The id in the database.
+	 * @param String   $firstName   : The firstName
+	 * @param String   $lastName    : The lastName
+	 * @param String   $email       : The email
+	 * @param Int      $postalCode  : French postal code, 5 or 6 chars
+	 * @return bool
+	 */
+	protected function validateData($id, $firstName, $lastName, $email, $postalCode) {
+
+		/** Create a new instance of the departments class */
+		$departments = new Departements();
+
+		if(empty($id)) {
+			throw new Exception("The id can't be empty!");
+		}
+
+		if(empty($firstName)) {
+			throw new Exception("The firstName can't be empty");
+		}
+
+		if(empty($lastName)) {
+			throw new Exception("The lastName can't be empty");
+		}
+
+		if(empty($email)) {
+			throw new Exception("The email can't be empty");
+		} elseif(validateEmailAddress($email) === false) {
+			throw new Exception("The email ${email} is not a valid email address.");
+		}
+
+		if(empty($postalCode)) {
+			throw new Exception("The postal code can't be empty");
+		} elseif($departments->checkPostCode($postalCode) === false) {
+			throw new Exception("The postal code ${postalCode} is not a valid postal code.");
+		}
+
+		return true;
 	}
 
 	public function getCurrentList() {
@@ -47,6 +110,33 @@ class Person {
 		$matches = $mailman->find('#' . $this->_email . '#');
 
 		return $matches;
+	}
+
+	public function getList() {
+
+		/** Create a new instance of the departments class */
+		$departments = new Departements();
+
+		$list = $departments->getDepartementCodeByZipCode($this->_postalCode);
+
+		if($list === false) {
+			throw new Exception("The postal code does not correspond to any departement and so the list can't be determined.");
+		}
+
+		$list=22;
+
+		return $list;
+	}
+
+	public function subscribeMember() {
+
+		/** Get an instance of the Mailman class */
+		$mailman = Mailman::getInstance();
+
+		/** Subscribe this member */
+		$result = $mailman->subscribeMember($this->getList(), $this->_email);
+
+		return $result;
 	}
 }
 ?>
