@@ -36,6 +36,7 @@ require_once(AUTOSYNCMLLIBDIR . DIRECTORY_SEPARATOR . 'common.php');
 
 /** Require classes */
 require_once(AUTOSYNCMLLIBDIR . DIRECTORY_SEPARATOR . 'classes' . DIRECTORY_SEPARATOR . 'Logger.class.php');
+require_once(AUTOSYNCMLLIBDIR . DIRECTORY_SEPARATOR . 'classes' . DIRECTORY_SEPARATOR . 'Email.class.php');
 require_once(AUTOSYNCMLLIBDIR . DIRECTORY_SEPARATOR . 'classes' . DIRECTORY_SEPARATOR . 'Departements.class.php');
 require_once(AUTOSYNCMLLIBDIR . DIRECTORY_SEPARATOR . 'classes' . DIRECTORY_SEPARATOR . 'Mailman.class.php');
 require_once(AUTOSYNCMLLIBDIR . DIRECTORY_SEPARATOR . 'classes' . DIRECTORY_SEPARATOR . 'Person.class.php');
