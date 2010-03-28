@@ -45,7 +45,11 @@ targets:
 install:
 	@for target in $(TARGETS) ; \
 	do \
-		$(INSTALL) -m 644 $${target} $(DESTDIR)$(etcdir)/$${target}; \
+		if [ -f $(DESTDIR)$(etcdir)/$${target} ]; then \
+			$(INSTALL) -m 644 $${target} $(DESTDIR)$(etcdir)/$${target}.new; \
+		else \
+			$(INSTALL) -m 644 $${target} $(DESTDIR)$(etcdir)/$${target}; \
+		fi; \
 	done
 
 clean:
