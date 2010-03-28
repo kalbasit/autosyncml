@@ -115,7 +115,7 @@ class Person {
 	public function getLists() {
 
 		/** Initialize the lists */
-		$lists = array();
+		$lists = array('Membres');
 
 		/** get the list by zip code */
 		$lists[] = $this->_getListByPostCode();
