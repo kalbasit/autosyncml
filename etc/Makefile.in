@@ -20,7 +20,7 @@
 VERSION=@VERSION@
 
 prefix=/usr/local
-etcdir=$(prefix)/etc
+etcdir=/etc
 bindir=$(prefix)/bin
 libdir=$(prefix)/lib
 autosyncmllibdir=$(libdir)/autosyncml
