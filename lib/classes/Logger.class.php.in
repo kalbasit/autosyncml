@@ -57,6 +57,11 @@ class Logger {
 	/** logEvent */
 	public function logEvent($type, $message, $debug = false) {
 
+		/** Undebug the previous CREATE_USER if necessary */
+		if($type != 'CREATE_PERSON' && $debug === false) {
+			$this->unDebugLast('CREATE_PERSON');
+		}
+
 		/** Record the event */
 		$event = array(
 			'date' => date($this->format),
@@ -95,13 +100,44 @@ class Logger {
 		$email->setSubject('AutosyncML LOG ' . date($this->format));
 
 		/** Set the message */
-		$message = $this->getLog() . "\n\n-- \n" . COPYRIGHT;
+		$message = $this->getLog() . $this->_getSignature();
 
 		/** Set the email body */
 		$email->setMessage($message);
 
 		/** Send the email */
 		$email->send();
+	}
+
+	protected function _getSignature() {
+
+		$signature = "\n\n-- \n\n";
+		$signature .= COPYRIGHT;
+
+		return $signature;
+	}
+
+	public function unDebugLast($type) {
+
+		/** iterate on the logs from the end, get the key of the last element of $type type */
+		end(self::$_log);
+		$key = null;
+		while($key === null) {
+			$current = current(self::$_log);
+			if($current['type'] == $type) {
+				$key = key(self::$_log);
+			} else {
+				$result = prev(self::$_log);
+				if($result === false) {
+					break;
+				}
+			}
+		}
+
+		/** If the current element's type is CREATE_USER set the debug to false */
+		if($key !== null) {
+			self::$_log[$key]['debug'] = false;
+		}
 	}
 }
 ?>

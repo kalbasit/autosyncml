@@ -63,7 +63,7 @@ foreach($mainPeopleSearch as $people) {
 	$postalCode = $people->$postalcode_tag;
 
 	/** Create a person */
-	$logger->logEvent('CREATE_PERSON', "id=${id}, firstName=${firstName}, email=${email}, postalCode=$postalCode");
+	$logger->logEvent('CREATE_PERSON', "id=${id}, firstName=${firstName}, email=${email}, postalCode=$postalCode", true);
 	try {
 		$person = new Person($id, $firstName, $lastName, $email, $postalCode);
 	} catch(Exception $e) {
