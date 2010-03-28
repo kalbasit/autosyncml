@@ -123,8 +123,6 @@ class Person {
 			throw new Exception("The postal code does not correspond to any departement and so the list can't be determined.");
 		}
 
-		$list=22;
-
 		return $list;
 	}
 
