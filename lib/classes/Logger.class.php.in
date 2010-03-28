@@ -94,7 +94,10 @@ class Logger {
 		$email = new Email();
 
 		/** Set the receipient */
-		$email->addRecipient(LOG_RECIPIENT);
+		$recipients = explode(',', LOG_RECIPIENT);
+		foreach($recipients as $recipient) {
+			$email->addRecipient(trim($recipient));
+		}
 
 		/** Set the subject */
 		$email->setSubject('AutosyncML LOG ' . date($this->format));
