@@ -24,7 +24,29 @@
 /** exit if AUTOSYNCML not defined */
 defined('AUTOSYNCML') or die("You cannot use this file, please use @BINDIR@/autosyncml");
 
-class Person extends ActiveRecord\Model {
+class Person {
 
+	private $_id;
+	private $_firstName;
+	private $_lastName;
+	private $_email;
+	private $_postalCode;
+
+	public function __construct($id, $firstName, $lastName, $email, $postalCode) {
+
+		$this->_id = $id;
+		$this->_firstName = $firstName;
+		$this->_lastName = $lastName;
+		$this->_email = $email;
+		$this->_postalCode = $postalCode;
+	}
+
+	public function getCurrentList() {
+
+		$mailman = Mailman::getInstance();
+		$matches = $mailman->find('#' . $this->email . '#');
+
+		return $matches;
+	}
 }
 ?>
