@@ -101,6 +101,11 @@ class Mailman {
 		/** log the Event */
 		$this->_logger->logEvent('GET_ALL_MEMBERS', '_getAllMembers() has been called.', true);
 
+		/** Make sure the lists are read */
+		if(empty(self::$_lists)) {
+			$this->_getAllLists();
+		}
+
 		/** Loop on each list getting the members */
 		foreach(self::$_lists as $list) {
 			/** Get the output of list_members ${list} */
