@@ -30,6 +30,17 @@ define('COPYRIGHT', 'AutosyncML version @VERSION@ by Wael Nasreddine <wael.nasre
 /** Require all libraries */
 require_once(AUTOSYNCMLLIBDIR . DIRECTORY_SEPARATOR . 'include.php');
 
+/** Verify if we should be running or not */
+if(isset($controlFile) && !empty($controlFile)) {
+	if(file_exists($controlFile) === false) {
+		/** The file doesn't exist, exit */
+		exit();
+	} else {
+		/** The file exists, just remove it */
+		unlink($controlFile);
+	}
+}
+
 /** Prepare the database connections */
 connectDbs();
 

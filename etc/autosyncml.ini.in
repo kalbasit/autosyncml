@@ -59,4 +59,11 @@ define('PEOPLE_SQL_ZIPCODE', 'zipCode');
  */
 define('LOG_RECIPIENT', 'webmaster@aulf.org');
 
+/**
+ * AutosynML Main configuration
+ */
+
+/** If this defined, the script won't run unless the file is found */
+// $controlFile = "";
+
 ?>
