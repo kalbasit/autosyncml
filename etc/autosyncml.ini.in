@@ -26,3 +26,32 @@ copy_user		= autosyncml
 copy_pwd		=
 copy_db			= Adherent
 copy_table		= people
+
+/**
+ * Special Mailing Lists
+ */
+[special_mls]
+
+/** Ile de France */
+names[]			= Idf
+departments[]	= 75,77,78,91,92,93,94,95
+countries[]		=
+not_countries[] =
+
+/** Liban */
+names[]			= Liban
+departments[]	= 00
+countries[]		= Liban
+not_countries[] =
+
+/** 99 */
+names[]			= 99
+departments[]	= 00
+countries[]		=
+not_countries[] = Liban
+
+/** World */
+names[]			= World
+departments[]	= 00
+countries[]		=
+not_countries[] = Liban

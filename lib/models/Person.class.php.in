@@ -32,6 +32,12 @@ class Person extends phpDataMapper_Entity {
 	/** Is the data valid */
 	protected $_validData = false;
 
+	/** The black listed lists */
+	protected $_blackListedLists = array(
+		'00',
+		'99',
+	);
+
 	/**
 	 * Constructor function
 	 */
@@ -118,8 +124,120 @@ class Person extends phpDataMapper_Entity {
 			$lists[] = $list;
 		}
 
+		/** Finally get the special mls */
+		$list = $this->_getListSpecialList();
+		if(!empty($list)) {
+			$lists = array_merge($lists, $list);
+		}
+
 		return $lists;
 	}
+
+	/**
+	 * Get the special list
+	 *
+	 * @return Array
+	 */
+	protected function _getListSpecialList() {
+
+		/** Get the Registry instance */
+		$registry = Registry::getInstance();
+
+		/** get the config */
+		$config = $registry->get('config');
+
+		/** Initialize the result array */
+		$lists = array();
+
+		/** get the special_ml */
+		$special_mls = $config->special_mls;
+
+		/** Generate the special mls */
+		if(!empty($special_mls)) {
+			/** Get the number of lists */
+			$special_ml_count = count($special_mls['names']);
+
+			/** Check which list this user gets */
+			for($i = 0; $i < $special_ml_count; $i++) {
+				$list_name = trim($special_mls['names'][$i]);
+				$departments = explode(',', $special_mls['departments'][$i]);
+				$countries = explode(',', $special_mls['countries'][$i]);
+				$not_countries = explode(',', $special_mls['not_countries'][$i]);
+
+				foreach($departments as &$department) {
+					/** Trim the department */
+					$department = trim($department);
+
+					/** If the department doesn't match continue */
+					if($this->_getDepartment() != $department)
+						continue;
+
+					/** If the countries and not_countries are empty, count this list in */
+					if($this->_doesArrayHasValidElements($countries) === false && $this->_doesArrayHasValidElements($not_countries) === false) {
+						$this->_logger->logEvent('ADD_SPECIAL_LIST', "The user " . $this->Ad_Email . " has been added to the special list " . $list_name, true);
+						$lists[] = $list_name;
+						continue;
+					}
+
+					/** Check for the country matches */
+					if($this->_doesArrayHasValidElements($countries) === true) {
+						foreach($countries as &$country) {
+							/** Trim the country */
+							$country = trim($country);
+
+							/** If the country matches, count this list in */
+							if($country == $this->Ad_Pays) {
+								$this->_logger->logEvent('ADD_SPECIAL_LIST', "The user " . $this->Ad_Email . " has been added to the special list " . $list_name, true);
+								$lists[] = $list_name;
+								continue 2;
+							}
+						}
+
+						/** If we're here, then it didn't match any country, go to the next list */
+						continue;
+					}
+
+					/** Check for the non-country matches */
+					if($this->_doesArrayHasValidElements($not_countries) === true) {
+						foreach($not_countries as &$not_country) {
+							/** Trim the not_country */
+							$not_country = trim($not_country);
+
+							/** If the country doesn't match, count this list in */
+							if($not_country != $this->Ad_Pays) {
+								$this->_logger->logEvent('ADD_SPECIAL_LIST', "The user " . $this->Ad_Email . " has been added to the special list " . $list_name, true);
+								$lists[] = $list_name;
+								continue 2;
+							}
+						}
+
+						/** If we're here, then it didn't match any not_country, go to the next list */
+						continue;
+					}
+				}
+			}
+		}
+
+		return $lists;
+	}
+
+	protected function _doesArrayHasValidElements($array) {
+
+		/** Initialize the result */
+		$result = false;
+
+		/** Iterate on the array and find out if there's any data */
+		foreach($array as $element) {
+			if(empty($element) === false) {
+				$result = true;
+				break;
+			}
+		}
+
+		return $result;
+	}
+
+
 
 	/**
 	 * This function return the list based on the zip code
@@ -131,18 +249,25 @@ class Person extends phpDataMapper_Entity {
 		/** Validate the data */
 		$this->validateData();
 
+		/** get the list */
+		$list = $this->_getDepartment();
+
+		/** Some lists are black-listed */
+		if(in_array($list, $this->_blackListedLists))
+			$list = null;
+
+		return $list;
+	}
+
+	protected function _getDepartment() {
+
 		/** Create a new instance of the departments class */
 		$departments = new Departements();
 
 		/** get the list */
-		$list = $departments->getDepartementCodeByZipCode($this->Ad_Code);
+		$department = $departments->getDepartementCodeByZipCode($this->Ad_Code);
 
-		/** If there's no list found, suppose it's lebanon */
-		if($list === false) {
-			$list = 'Liban';
-		}
-
-		return $list;
+		return $department;
 	}
 
 	/**

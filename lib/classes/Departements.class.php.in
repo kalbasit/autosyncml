@@ -103,6 +103,10 @@ class Departements {
 		,"972"=>"Martinique"
 		,"973"=>"Guyane"
 		,"974"=>"REUNION"
+
+		/** Departement des etrangers */
+		,"99"=>"Etranger"
+		,"00"=>"Etranger"
 	);
 
 	/**
