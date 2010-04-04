@@ -36,17 +36,18 @@ $logger = Logger::getInstance();
 /** Get the Registry instance */
 $registry = Registry::getInstance();
 
-/** get the config */
-$config = $registry->get('config');
+/** Load the configs */
+$config = Settings::getInstance(ETCDIR .  DIRECTORY_SEPARATOR . 'autosyncml.ini');
+$registry->set('config', $config);
 
 /** Verify if we should be running or not */
-if(array_key_exists('CONTROL_FILE', $config) && empty($config['CONTROL_FILE']) === false) {
-	if(file_exists($controlFile) === false) {
+if(empty($config->control_file) === false) {
+	if(file_exists($config->control_file) === false) {
 		/** The file doesn't exist, exit */
 		exit();
 	} else {
 		/** The file exists, just remove it */
-		unlink($controlFile);
+		unlink($config->control_file);
 	}
 }
 
@@ -59,13 +60,6 @@ $mailman = Mailman::getInstance();
 /** Get the People object */
 $mainPeople = new MainPeople();
 //$copyPeople = new CopyPeople();
-
-/** Define the keys to use in adodb, must be lower case */
-$id_tag = strtolower(PEOPLE_SQL_ID);
-$firstname_tag = strtolower(PEOPLE_SQL_FIRSTNAME);
-$lastname_tag = strtolower(PEOPLE_SQL_LASTNAME);
-$email_tag = strtolower(PEOPLE_SQL_EMAIL);
-$postalcode_tag = strtolower(PEOPLE_SQL_ZIPCODE);
 
 /** Find all people */
 $logger->logEvent('GET_ALL_ROWS_FROM_ADHERENT', 'Calling the find() function of the mainPeople model', true);

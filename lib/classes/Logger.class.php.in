@@ -100,13 +100,13 @@ class Logger {
 		$config = $registry->get('config');
 
 		/** Set the receipient */
-		if(strpos($config['LOG_RECIPIENT'], ',') !== false) {
-			$recipients = explode(',', $config['LOG_RECIPIENT']);
+		if(strpos($config->log_recipients, ',') !== false) {
+			$recipients = explode(',', $config->log_recipients);
 			foreach($recipients as $recipient) {
 				$email->addRecipient(trim($recipient));
 			}
 		} else {
-			$email->addRecipient(trim($config['LOG_RECIPIENT']));
+			$email->addRecipient(trim($config->log_recipients));
 		}
 
 		/** Set the subject */

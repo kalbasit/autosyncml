@@ -64,7 +64,7 @@ class MainPeople extends People {
 		/** get the config */
 		$config = $registry->get('config');
 
-		$this->_table = $config['DATABASE']['MAIN']['SETTINGS']['table'];
+		$this->_table = $config->main_table;
 
 		parent::__construct();
 	}

@@ -59,7 +59,7 @@ function connectDbs() {
 	/** get the config */
 	$config = $registry->get('config');
 
-	$main = connectDb($config['DATABASE']['MAIN']['SETTINGS']['adapter'], $config['DATABASE']['MAIN']['SETTINGS']['host'], $config['DATABASE']['MAIN']['SETTINGS']['user'], $config['DATABASE']['MAIN']['SETTINGS']['pwd'], $config['DATABASE']['MAIN']['SETTINGS']['db']);
+	$main = connectDb($config->main_adapter, $config->main_host, $config->main_user, $config->main_pwd, $config->main_db);
 
 	ADOdb_Active_Record::SetDatabaseAdapter($main, 'main');
 }

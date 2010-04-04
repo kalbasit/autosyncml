@@ -1,0 +1,96 @@
+<?php
+/**
+ * vim:ft=php:fenc=UTF-8:ts=4:sts=4:sw=4:noexpandtab:foldmethod=marker:foldlevel=0:
+ *
+ * Copyright (c) 2010 Wael Nasreddine <wael.nasreddine@gmail.com>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307,
+ * USA.
+ *
+ */
+
+/** exit if AUTOSYNCML not defined */
+defined('AUTOSYNCML') or die("You cannot use this file, please use @BINDIR@/autosyncml");
+
+class Settings {
+
+	/** class name */
+	protected static $_className = 'Settings';
+
+	/** The registry instance */
+	protected static $_instance = null;
+
+	/** The log instance */
+	protected static $_logger = null;
+
+	/** The settings */
+	protected $_settings = null;
+
+	protected function __construct($ini_file) {
+
+		/** Get the log */
+		$this->_logger = Logger::getInstance();
+
+		/** Log the creation of an object */
+		$this->_logger->logEvent('NEW_INSTANCE', 'SETTINGS CLASS', true);
+
+		/** Parse the settings */
+		$this->_settings = parse_ini_file($ini_file, true);
+	}
+
+	/** Destructor */
+	public function __destruct() {
+
+		/** Log the destruction of an object */
+		$this->_logger->logEvent('REMOVE_INSTANCE', 'SETTINGS CLASS', true);
+	}
+
+	/**
+	 * This function return the only instance of this class, create one if no instance exists
+	 *
+	 * @return Settings
+	 */
+	public static function getInstance($ini_file = null) {
+
+		if(self::$_instance === null || !(self::$_instance instanceof self::$_className)) {
+			self::$_instance = new self::$_className($ini_file);
+		}
+
+		return self::$_instance;
+	}
+
+	public function __get($setting) {
+
+		/**
+		 * Look for the config variable without sections, if nothing
+		 * id found, look in the sub-sections.
+		 *
+		 * @return: The setting value or the whole section
+		 */
+		if(array_key_exists($setting, $this->_settings)) {
+			$result = $this->_settings[$setting];
+		} else {
+			foreach($this->_settings as $section) {
+				if(array_key_exists($setting, $section)) {
+					$result = $section[$setting];
+				}
+			}
+		}
+
+		return $result;
+	}
+}
+
+?>
