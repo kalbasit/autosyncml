@@ -107,11 +107,25 @@ class Person extends phpDataMapper_Entity {
 		$lists = array('Membres');
 
 		/** get the list by zip code */
-		$lists[] = $this->_getListByPostCode();
+		$list = $this->_getListByPostCode();
+		if(!empty($list)) {
+			$lists[] = $list;
+		}
+
+		/** get the list by speciality */
+		$list = $this->_getListBySpeciality();
+		if(!empty($list)) {
+			$lists[] = $list;
+		}
 
 		return $lists;
 	}
 
+	/**
+	 * This function return the list based on the zip code
+	 *
+	 * @return String | Int
+	 */
 	protected function _getListByPostCode() {
 
 		/** Validate the data */
@@ -131,6 +145,33 @@ class Person extends phpDataMapper_Entity {
 		return $list;
 	}
 
+	/**
+	 * This function return the list based on this person speciality
+	 *
+	 * @return String | null
+	 */
+	protected function _getListBySpeciality() {
+
+		/** Validate the data */
+		$this->validateData();
+
+		/** Initialize the list */
+		$list = null;
+
+		switch($this->Ad_Specialite) {
+		case 'Informatique':
+			$list = 'Informaticiens';
+			break;
+		}
+
+		return $list;
+	}
+
+	/**
+	 * This function ensure that this user is subscribed to and only to the calculated lists using $this->getLists()
+	 *
+	 * @return void
+	 */
 	public function ensureSubscriptions($currentSubscriptions = null) {
 
 		/** Validate the data */
