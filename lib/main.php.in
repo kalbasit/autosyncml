@@ -107,6 +107,6 @@ foreach($mainPeopleSearch as $person) {
 }
 
 /** Send the logs */
-echo $logger->getLog();
+$logger->sendLog();
 
 ?>
