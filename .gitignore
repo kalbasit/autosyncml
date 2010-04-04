@@ -9,6 +9,8 @@ lib/models/Makefile
 lib/models/*.php
 lib/classes/Makefile
 lib/classes/*.php
+lib/exceptions/Makefile
+lib/exceptions/*.php
 
 etc/Makefile
 etc/*.ini
