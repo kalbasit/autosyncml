@@ -39,7 +39,7 @@ class People extends phpDataMapper_Base {
 	public $Ad_Prenom				= array('type' => 'string', 'length' => 30, 'required' => false);
 	public $Ad_Login				= array('type' => 'string', 'length' => 40, 'required' => false);
 	public $Ad_Password				= array('type' => 'string', 'length' => 12, 'required' => false);
-	public $Ad_alacarte				= array('type' => 'string', 'length' => 3, 'required' => true, 'default' => 'non');
+	public $Ad_alacarte				= array('type' => 'string', 'length' => 3, 'required' => false, 'default' => 'non');
 	public $Ad_Nationalite			= array('type' => 'string', 'length' => 40, 'required' => false);
 	public $Ad_Email				= array('type' => 'string', 'length' => 50, 'required' => false);
 	public $Ad_Adresse				= array('type' => 'text', 'required' => false);

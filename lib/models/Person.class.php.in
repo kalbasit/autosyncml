@@ -38,6 +38,9 @@ class Person extends phpDataMapper_Entity {
 		'99',
 	);
 
+	/** The fields */
+	protected $_fields = null;
+
 	/**
 	 * Constructor function
 	 */
@@ -48,6 +51,33 @@ class Person extends phpDataMapper_Entity {
 
 		/** Send the info to the parent class */
 		parent::__construct($data);
+	}
+
+	public function fields() {
+
+		if($this->_fields === null) {
+			/** Initalize the fields array */
+			$fields = array();
+
+			/** Iterate over the data and have the fields ready */
+			foreach($this->_data as $field => $value) {
+				$fields[] = $field;
+			}
+
+			/** Record the fields */
+			$this->_fields = $fields;
+		}
+
+		return $this->_fields;
+	}
+
+	public function copyProperties(Person $person) {
+
+
+		/** Iterate on the fields and set the value of this from the value inside person */
+		foreach($person->fields() as $field) {
+			$this->$field = $person->$field;
+		}
 	}
 
 	/**

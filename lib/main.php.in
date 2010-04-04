@@ -63,7 +63,7 @@ $mainPeople = new MainPeople($registry->get('main_connection'));
 $copyPeople = new CopyPeople($registry->get('copy_connection'));
 
 /** Find all people */
-$logger->logEvent('GET_ALL_ROWS_FROM_ADHERENT', 'Calling the find() function of the mainPeople model', true);
+$logger->logEvent('GET_ALL_ROWS_FROM_ADHERENT', 'Calling the all() function of the mainPeople model', true);
 $mainPeopleSearch = $mainPeople->all();
 
 foreach($mainPeopleSearch as $person) {
@@ -93,6 +93,41 @@ foreach($mainPeopleSearch as $person) {
 
 		/** Log the Event */
 		$logger->logEvent('USER_KNOWN', "The user " . $person->Ad_Email . " is known and subscribed to the following lists: " . implode(', ', $subscribedListsList), true);
+	}
+
+	/** Check if the user has changed his email */
+	$copy_person = $copyPeople->get($person->Ad_ID);
+	$copy_person_fields = $person->toArray();
+	if(!empty($copy_person->Ad_Email)) {
+		/** If the email has changed, unsubscribe the old email */
+		if($person->Ad_Email != $copy_person->Ad_Email) {
+			/** Get the subscribed list for the old email */
+			$copy_person_subscribedLists = $copy_person->getCurrentList();
+			if(!empty($copy_person_subscribedLists)) {
+				foreach($copy_person_subscribedLists as $subscribedList => $subscribedEmail) {
+					try {
+						$mailman->unsubscribeMember($subscribedList, $copy_person->Ad_Email);
+					} catch(InvalidPropertyException $e) {
+						$logger->logEvent('EXCEPTION', $e->getMessage());
+						continue;
+					} catch(Exception $e) {
+						$logger->logEvent('EXCEPTION', $e->getMessage());
+						continue;
+					}
+				}
+			}
+		}
+	} else {
+		unset($copy_person_fields['Ad_ID']);
+	}
+
+	/** Either way update the copy */
+	$copy_person = $copyPeople->get()->data($copy_person_fields);
+	$copy_person_saved = $copyPeople->save($copy_person);
+
+	/** Sanity check on the copy_person */
+	if(!$copy_person_saved) {
+		$logger->logEvent('EXCEPTION', "Copying the user " . $person->Ad_Email . " has failed, errors: " . implode(',', $copyPeople->errors()));
 	}
 
 	/** Subscribe / Unsubscibe the user if necessary */
