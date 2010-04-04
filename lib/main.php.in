@@ -30,8 +30,17 @@ define('COPYRIGHT', 'AutosyncML version @VERSION@ by Wael Nasreddine <wael.nasre
 /** Require all libraries */
 require_once(AUTOSYNCMLLIBDIR . DIRECTORY_SEPARATOR . 'include.php');
 
+/** Get the logger */
+$logger = Logger::getInstance();
+
+/** Get the Registry instance */
+$registry = Registry::getInstance();
+
+/** get the config */
+$config = $registry->get('config');
+
 /** Verify if we should be running or not */
-if(isset($controlFile) && !empty($controlFile)) {
+if(array_key_exists('CONTROL_FILE', $config) && empty($config['CONTROL_FILE']) === false) {
 	if(file_exists($controlFile) === false) {
 		/** The file doesn't exist, exit */
 		exit();
@@ -40,12 +49,6 @@ if(isset($controlFile) && !empty($controlFile)) {
 		unlink($controlFile);
 	}
 }
-
-/** Get the logger */
-$logger = Logger::getInstance();
-
-/** Get the Registry instance */
-$registry = Registry::getInstance();
 
 /** Prepare the database connections */
 connectDbs();
@@ -70,11 +73,11 @@ $mainPeopleSearch = $mainPeople->Find('');
 
 foreach($mainPeopleSearch as $people) {
 	/** Get the elements from the mainPeopleSearch */
-	$id = $people->$id_tag;
-	$firstName = $people->$firstname_tag;
-	$lastName = $people->$lastname_tag;
-	$email = $people->$email_tag;
-	$postalCode = $people->$postalcode_tag;
+	$id = $people->ad_id;
+	$firstName = $people->ad_prenom;
+	$lastName = $people->ad_nom;
+	$email = $people->ad_email;
+	$postalCode = $people->ad_code;
 
 	/** Create a person */
 	$logger->logEvent('CREATE_PERSON', "id=${id}, firstName=${firstName}, email=${email}, postalCode=$postalCode", true);

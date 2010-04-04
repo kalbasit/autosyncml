@@ -48,13 +48,26 @@ class People extends ADOdb_Active_Record {
 class MainPeople extends People {
 
 	# The table name
-	public $_table = PEOPLE_SQL_TABLE;
+	public $_table = null;
 
 	# The primary key
-	public static $primary_key = PEOPLE_SQL_ID;
+	public static $primary_key = 'ad_id';
 
 	# Specify the connection
 	public $_dbat = 'main';
+
+	public function __construct() {
+
+		/** Get the Registry instance */
+		$registry = Registry::getInstance();
+
+		/** get the config */
+		$config = $registry->get('config');
+
+		$this->_table = $config['DATABASE']['MAIN']['SETTINGS']['table'];
+
+		parent::__construct();
+	}
 }
 
 //class CopyPeople extends People {

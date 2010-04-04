@@ -28,9 +28,6 @@ defined('AUTOSYNCML') or die("You cannot use this file, please use @BINDIR@/auto
 require_once(AUTOSYNCMLLIBDIR . DIRECTORY_SEPARATOR . 'adodb' . DIRECTORY_SEPARATOR . 'adodb.inc.php');
 require_once(AUTOSYNCMLLIBDIR . DIRECTORY_SEPARATOR . 'adodb' . DIRECTORY_SEPARATOR . 'adodb-active-record.inc.php');
 
-/** require configs */
-require_once(ETCDIR .  DIRECTORY_SEPARATOR . 'autosyncml.ini');
-
 /** require common */
 require_once(AUTOSYNCMLLIBDIR . DIRECTORY_SEPARATOR . 'common.php');
 
@@ -47,5 +44,8 @@ require_once(AUTOSYNCMLLIBDIR . DIRECTORY_SEPARATOR . 'classes' . DIRECTORY_SEPA
 
 /** Require models */
 require_once(AUTOSYNCMLLIBDIR . DIRECTORY_SEPARATOR . 'models' . DIRECTORY_SEPARATOR . 'People.class.php');
+
+/** require configs */
+require_once(ETCDIR .  DIRECTORY_SEPARATOR . 'autosyncml.ini');
 
 ?>

@@ -21,49 +21,56 @@
  *
  */
 
+/** Get the registry */
+$registry = Registry::getInstance();
+
+/** Initialize the config array */
+$config = array();
+
 /**
  * Mysql Configurations
  */
-/** People */
-define('PEOPLE_SQL_ADAPTER', 'mysql');
-define('PEOPLE_SQL_HOST', 'localhost');
-define('PEOPLE_SQL_USER', 'autosyncml');
-define('PEOPLE_SQL_PWD', '');
-define('PEOPLE_SQL_DB', 'autosyncmldb');
-define('PEOPLE_SQL_TABLE', 'people');
 
-/** Local Copy of People */
-//define('PEOPLE_COPY_SQL_ADAPTER', 'sqlite');
-//define('PEOPLE_COPY_SQL_HOST', '');
-//define('PEOPLE_COPY_SQL_USER', '');
-//define('PEOPLE_COPY_SQL_PWD', '');
-//define('PEOPLE_COPY_SQL_DB', '@SHAREDIR@/autosyncml/mailinglist.sqlite');
-//define('PEOPLE_COPY_SQL_TABLE', 'people');
+/**
+ * The settings for the main connection
+ *
+ */
+$config['DATABASE']['MAIN']['SETTINGS'] = array (
+	'adapter'		=> 'mysql',
+	'host'			=> 'localhost',
+	'user'			=> 'autosyncml',
+	'pwd'			=> '',
+	'db'			=> 'Adherent',
+	'table'			=> 'people',
+);
 
-/** People fields */
-define('PEOPLE_SQL_ID', 'Id');
-define('PEOPLE_SQL_FIRSTNAME', 'firstName');
-define('PEOPLE_SQL_LASTNAME', 'lastName');
-define('PEOPLE_SQL_EMAIL', 'email');
-define('PEOPLE_SQL_ZIPCODE', 'zipCode');
+/**
+ * The settings for the other connection
+ *
+ */
+$config['DATABASE']['COPY']['SETTINGS'] = array (
+	'adapter'		=> 'mysql',
+	'host'			=> 'localhost',
+	'user'			=> 'autosyncml',
+	'pwd'			=> '',
+	'db'			=> 'Adherent2',
+	'table'			=> 'people',
+);
 
-/** Local Copy of People fields */
-//define('PEOPLE_COPY_SQL_ID', 'Id');
-//define('PEOPLE_COPY_SQL_FIRSTNAME', 'firstName');
-//define('PEOPLE_COPY_SQL_LASTNAME', 'lastName');
-//define('PEOPLE_COPY_SQL_EMAIL', 'email');
-//define('PEOPLE_COPY_SQL_ZIPCODE', 'zipCode');
 
 /**
  * Email Configurations
  */
-define('LOG_RECIPIENT', 'webmaster@aulf.org');
+$config['LOG_RECIPIENT'] = 'webmaster@aulf.org';
 
 /**
  * AutosynML Main configuration
  */
 
 /** If this defined, the script won't run unless the file is found */
-// $controlFile = "";
+// $config['CONTROL_FILE'] = '';
+
+/** Set the config in the registry */
+$registry->set('config', $config);
 
 ?>
