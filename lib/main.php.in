@@ -41,14 +41,17 @@ if(isset($controlFile) && !empty($controlFile)) {
 	}
 }
 
+/** Get the logger */
+$logger = Logger::getInstance();
+
+/** Get the Registry instance */
+$registry = Registry::getInstance();
+
 /** Prepare the database connections */
 connectDbs();
 
 /** Create the Mailman object */
 $mailman = Mailman::getInstance();
-
-/** Get the logger */
-$logger = Logger::getInstance();
 
 /** Get the People object */
 $mainPeople = new MainPeople();

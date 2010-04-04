@@ -34,8 +34,12 @@ require_once(ETCDIR .  DIRECTORY_SEPARATOR . 'autosyncml.ini');
 /** require common */
 require_once(AUTOSYNCMLLIBDIR . DIRECTORY_SEPARATOR . 'common.php');
 
+/** require exceptions */
+require_once(AUTOSYNCMLLIBDIR . DIRECTORY_SEPARATOR . 'exceptions' . DIRECTORY_SEPARATOR . 'NoEntryException.class.php');
+
 /** Require classes */
 require_once(AUTOSYNCMLLIBDIR . DIRECTORY_SEPARATOR . 'classes' . DIRECTORY_SEPARATOR . 'Logger.class.php');
+require_once(AUTOSYNCMLLIBDIR . DIRECTORY_SEPARATOR . 'classes' . DIRECTORY_SEPARATOR . 'Registry.class.php');
 require_once(AUTOSYNCMLLIBDIR . DIRECTORY_SEPARATOR . 'classes' . DIRECTORY_SEPARATOR . 'Email.class.php');
 require_once(AUTOSYNCMLLIBDIR . DIRECTORY_SEPARATOR . 'classes' . DIRECTORY_SEPARATOR . 'Departements.class.php');
 require_once(AUTOSYNCMLLIBDIR . DIRECTORY_SEPARATOR . 'classes' . DIRECTORY_SEPARATOR . 'Mailman.class.php');

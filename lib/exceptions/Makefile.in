@@ -20,7 +20,7 @@
 VERSION=@VERSION@
 
 prefix=/usr/local
-etcdir=/etc
+etcdir=$(prefix)/etc
 bindir=$(prefix)/bin
 libdir=$(prefix)/lib
 autosyncmllibdir=$(libdir)/autosyncml
@@ -29,9 +29,9 @@ INSTALL=install
 MAKE=make
 GIT=git
 
-TARGETS= 	main.php include.php common.php
+TARGETS= 	NoEntryException.class.php
 
-targets: make-models-targets make-classes-targets make-exceptions-targets
+targets:
 	@for target in $(TARGETS) ; \
 	do \
 		sed -e "s:@VERSION@:$(VERSION):g" \
@@ -42,42 +42,15 @@ targets: make-models-targets make-classes-targets make-exceptions-targets
 			$${target}.in > $${target}; \
 	done
 
-install: make-models-install make-classes-install make-exceptions-install
+install:
+	$(INSTALL) -d -m 755 $(DESTDIR)$(autosyncmllibdir)/exceptions
 	@for target in $(TARGETS) ; \
 	do \
-		$(INSTALL) -m 644 $${target} $(DESTDIR)$(autosyncmllibdir)/$${target}; \
+		$(INSTALL) -m 644 $${target} $(DESTDIR)$(autosyncmllibdir)/exceptions/$${target}; \
 	done
-	@cp -a adodb $(DESTDIR)$(autosyncmllibdir)/adodb
 
-clean: make-models-clean make-classes-clean make-exceptions-clean
+clean:
 	@for target in $(TARGETS) ; \
 	do \
 		rm -f $${target}; \
 	done
-
-make-models-targets:
-	@$(MAKE) -C models targets
-
-make-models-install:
-	@$(MAKE) -C models install
-
-make-models-clean:
-	@$(MAKE) -C models clean
-
-make-classes-targets:
-	@$(MAKE) -C classes targets
-
-make-classes-install:
-	@$(MAKE) -C classes install
-
-make-classes-clean:
-	@$(MAKE) -C classes clean
-
-make-exceptions-targets:
-	@$(MAKE) -C exceptions targets
-
-make-exceptions-install:
-	@$(MAKE) -C exceptions install
-
-make-exceptions-clean:
-	@$(MAKE) -C exceptions clean

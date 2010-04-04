@@ -1,0 +1,124 @@
+<?php
+/**
+ * vim:ft=php:fenc=UTF-8:ts=4:sts=4:sw=4:noexpandtab:foldmethod=marker:foldlevel=0:
+ *
+ * Copyright (c) 2010 Wael Nasreddine <wael.nasreddine@gmail.com>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307,
+ * USA.
+ *
+ */
+
+/** exit if AUTOSYNCML not defined */
+defined('AUTOSYNCML') or die("You cannot use this file, please use @BINDIR@/autosyncml");
+
+
+/**
+ * This registry class is used to save/load vars inside the project
+ */
+class Registry extends ArrayObject {
+
+	/** class name */
+	protected static $_className = 'Registry';
+
+	/** The registry instance */
+	protected static $_instance = null;
+
+	/** The log instance */
+	protected static $_logger = null;
+
+
+	/**
+	 * Constructs a parent ArrayObject with default
+	 * ARRAY_AS_PROPS to allow acces as an object
+	 *
+	 * @param array $array data array
+	 * @param integer $flags ArrayObject flags
+	 */
+	public function __construct($array = array(), $flags = parent::ARRAY_AS_PROPS) {
+
+		/** Get the log */
+		$this->_logger = Logger::getInstance();
+
+		/** Log the creation of an object */
+		$this->_logger->logEvent('NEW_INSTANCE', 'REGISTRY CLASS', true);
+
+		/** Send the options back to the parent class */
+		parent::__construct($array, $flags);
+	}
+
+	/** Destructor */
+	public function __destruct() {
+
+		/** Log the destruction of an object */
+		$this->_logger->logEvent('REMOVE_INSTANCE', 'REGISTRY CLASS', true);
+	}
+
+	/**
+	 * This function return the only instance of this class, create one if no instance exists
+	 *
+	 * @return Registry
+	 */
+	public static function getInstance() {
+
+		if(self::$_instance === null || !(self::$_instance instanceof self::$_className)) {
+			self::$_instance = new self::$_className();
+		}
+
+		return self::$_instance;
+	}
+
+	/**
+	 * getter method, basically same as offsetGet().
+	 *
+	 * This method can be called from an object of type Registry, or it
+	 * can be called statically.  In the latter case, it uses the default
+	 * static instance stored in the class.
+	 *
+	 * @param string $index - get the value associated with $index
+	 * @return mixed
+	 * @throws NoEntryException if no entry is registerd for $index.
+	 */
+	public static function get($index) {
+
+		$instance = self::getInstance();
+
+		if (!$instance->offsetExists($index)) {
+			throw new NoEntryException("No entry is registered for key '$index' in the registry");
+		}
+
+		return $instance->offsetGet($index);
+	}
+
+	/**
+	 * setter method, basically same as offsetSet().
+	 *
+	 * This method can be called from an object of type Registry, or it
+	 * can be called statically.  In the latter case, it uses the default
+	 * static instance stored in the class.
+	 *
+	 * @param string $index The location in the ArrayObject in which to store the value.
+	 * @param mixed $value The object to store in the ArrayObject.
+	 * @return void
+	 */
+	public static function set($index, $value) {
+
+		$instance = self::getInstance();
+		$instance->offsetSet($index, $value);
+	}
+
+}
+
+?>
