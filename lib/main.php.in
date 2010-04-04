@@ -41,13 +41,14 @@ $config = Settings::getInstance(ETCDIR .  DIRECTORY_SEPARATOR . 'autosyncml.ini'
 $registry->set('config', $config);
 
 /** Verify if we should be running or not */
-if(empty($config->control_file) === false) {
-	if(file_exists($config->control_file) === false) {
+$controlFile = $config->control_file;
+if(empty($controlFile) === false) {
+	if(file_exists($controlFile) === false) {
 		/** The file doesn't exist, exit */
 		exit();
 	} else {
 		/** The file exists, just remove it */
-		unlink($config->control_file);
+		unlink($controlFile);
 	}
 }
 
