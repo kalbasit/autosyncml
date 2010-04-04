@@ -31,6 +31,7 @@ require_once(AUTOSYNCMLLIBDIR . DIRECTORY_SEPARATOR . 'phpDataMapper' . DIRECTOR
 require_once(AUTOSYNCMLLIBDIR . DIRECTORY_SEPARATOR . 'common.php');
 
 /** require exceptions */
+require_once(AUTOSYNCMLLIBDIR . DIRECTORY_SEPARATOR . 'exceptions' . DIRECTORY_SEPARATOR . 'InvalidPropertyException.class.php');
 require_once(AUTOSYNCMLLIBDIR . DIRECTORY_SEPARATOR . 'exceptions' . DIRECTORY_SEPARATOR . 'NoEntryException.class.php');
 
 /** Require classes */
@@ -40,9 +41,9 @@ require_once(AUTOSYNCMLLIBDIR . DIRECTORY_SEPARATOR . 'classes' . DIRECTORY_SEPA
 require_once(AUTOSYNCMLLIBDIR . DIRECTORY_SEPARATOR . 'classes' . DIRECTORY_SEPARATOR . 'Email.class.php');
 require_once(AUTOSYNCMLLIBDIR . DIRECTORY_SEPARATOR . 'classes' . DIRECTORY_SEPARATOR . 'Departements.class.php');
 require_once(AUTOSYNCMLLIBDIR . DIRECTORY_SEPARATOR . 'classes' . DIRECTORY_SEPARATOR . 'Mailman.class.php');
-require_once(AUTOSYNCMLLIBDIR . DIRECTORY_SEPARATOR . 'classes' . DIRECTORY_SEPARATOR . 'Person.class.php');
 
 /** Require models */
 require_once(AUTOSYNCMLLIBDIR . DIRECTORY_SEPARATOR . 'models' . DIRECTORY_SEPARATOR . 'People.class.php');
+require_once(AUTOSYNCMLLIBDIR . DIRECTORY_SEPARATOR . 'models' . DIRECTORY_SEPARATOR . 'Person.class.php');
 
 ?>

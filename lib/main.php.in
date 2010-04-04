@@ -58,33 +58,28 @@ connectDbs();
 $mailman = Mailman::getInstance();
 
 /** Get the People object */
-$mainPeople = new MainPeople();
-//$copyPeople = new CopyPeople();
+$mainPeople = new MainPeople($registry->get('main_connection'));
+$copyPeople = new CopyPeople($registry->get('copy_connection'));
 
 /** Find all people */
 $logger->logEvent('GET_ALL_ROWS_FROM_ADHERENT', 'Calling the find() function of the mainPeople model', true);
-$mainPeopleSearch = $mainPeople->Find('');
+$mainPeopleSearch = $mainPeople->all();
 
-foreach($mainPeopleSearch as $people) {
-	/** Get the elements from the mainPeopleSearch */
-	$id = $people->ad_id;
-	$firstName = $people->ad_prenom;
-	$lastName = $people->ad_nom;
-	$email = $people->ad_email;
-	$postalCode = $people->ad_code;
+foreach($mainPeopleSearch as $person) {
 
-	/** Create a person */
-	$logger->logEvent('CREATE_PERSON', "id=${id}, firstName=${firstName}, email=${email}, postalCode=$postalCode", true);
+	/** Get the subscribed list */
 	try {
-		$person = new Person($id, $firstName, $lastName, $email, $postalCode);
+		$subscribedLists = $person->getCurrentList();
+	} catch(InvalidPropertyException $e) {
+		$logger->logEvent('EXCEPTION', $e->getMessage());
+		continue;
 	} catch(Exception $e) {
 		$logger->logEvent('EXCEPTION', $e->getMessage());
 		continue;
 	}
 
-	$subscribedLists = $person->getCurrentList();
 	if(empty($subscribedLists)) {
-		$logger->logEvent('USER_UNKNOWN', "The user ${email} is not subscribed to any existing list, we will subscribe him to his list.", true);
+		$logger->logEvent('USER_UNKNOWN', "The user " . $person->Ad_Email . " is not subscribed to any existing list, we will subscribe him to his list.", true);
 		$subscribedListsList = null;
 	} else {
 		/** Initialize the lists array */
@@ -96,12 +91,15 @@ foreach($mainPeopleSearch as $people) {
 		}
 
 		/** Log the Event */
-		$logger->logEvent('USER_KNOWN', "The user is known and subscribed to the following lists: " . implode(', ', $subscribedListsList), true);
+		$logger->logEvent('USER_KNOWN', "The user " . $person->Ad_Email . " is known and subscribed to the following lists: " . implode(', ', $subscribedListsList), true);
 	}
 
 	/** Subscribe / Unsubscibe the user if necessary */
 	try {
 		$person->ensureSubscriptions($subscribedListsList);
+	} catch(InvalidPropertyException $e) {
+		$logger->logEvent('EXCEPTION', $e->getMessage());
+		continue;
 	} catch(Exception $e) {
 		$logger->logEvent('EXCEPTION', $e->getMessage());
 		continue;
@@ -109,6 +107,6 @@ foreach($mainPeopleSearch as $people) {
 }
 
 /** Send the logs */
-$logger->sendLog();
+echo $logger->getLog();
 
 ?>

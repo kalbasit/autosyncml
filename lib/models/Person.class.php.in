@@ -24,95 +24,84 @@
 /** exit if AUTOSYNCML not defined */
 defined('AUTOSYNCML') or die("You cannot use this file, please use @BINDIR@/autosyncml");
 
-class Person {
-
-	/** This person's properties */
-	private $_id;
-	private $_firstName;
-	private $_lastName;
-	private $_email;
-	private $_postalCode;
+class Person extends phpDataMapper_Entity {
 
 	/** The logger */
 	protected $_logger;
 
+	/** Is the data valid */
+	protected $_validData = false;
+
 	/**
-	 * Constructor
-	 *
-	 * @param Int      $id          : The id in the database.
-	 * @param String   $firstName   : The firstName
-	 * @param String   $lastName    : The lastName
-	 * @param String   $email       : The email
-	 * @param Int      $postalCode  : French postal code, 5 or 6 chars
-	 * @return Person
+	 * Constructor function
 	 */
-	public function __construct($id, $firstName, $lastName, $email, $postalCode) {
+	public function __construct($data = null) {
 
 		/** Get the logger */
 		$this->_logger = Logger::getInstance();
 
-		/** Validate the data */
-		$this->validateData($id, $firstName, $lastName, $email, $postalCode);
-
-		/** Record the properties */
-		$this->_id = $id;
-		$this->_firstName = $firstName;
-		$this->_lastName = $lastName;
-		$this->_email = $email;
-		$this->_postalCode = $postalCode;
+		/** Send the info to the parent class */
+		parent::__construct($data);
 	}
 
 	/**
 	 * This function validated the data, throws exception where it's necessary
 	 *
-	 * @param Int      $id          : The id in the database.
-	 * @param String   $firstName   : The firstName
-	 * @param String   $lastName    : The lastName
-	 * @param String   $email       : The email
-	 * @param Int      $postalCode  : French postal code, 5 or 6 chars
-	 * @return bool
+	 * @return void
+	 * @throws InvalidProperty
 	 */
-	protected function validateData($id, $firstName, $lastName, $email, $postalCode) {
+	protected function validateData() {
+
+		if($this->_validData === true) {
+			return;
+		}
 
 		/** Create a new instance of the departments class */
 		$departments = new Departements();
 
-		if(empty($id)) {
-			throw new Exception("The id can't be empty!");
+		if(empty($this->Ad_ID)) {
+			throw new InvalidPropertyException("Ad_ID", "The id can't be empty!");
 		}
 
-		if(empty($firstName)) {
-			throw new Exception("The firstName can't be empty");
+		if(empty($this->Ad_Prenom)) {
+			throw new InvalidPropertyException("Ad_Prenom", "The firstName can't be empty");
 		}
 
-		if(empty($lastName)) {
-			throw new Exception("The lastName can't be empty");
+		if(empty($this->Ad_Nom)) {
+			throw new InvalidPropertyException("Ad_Nom", "The lastName can't be empty");
 		}
 
-		if(empty($email)) {
-			throw new Exception("The email can't be empty");
-		} elseif(validateEmailAddress($email) === false) {
-			throw new Exception("The email ${email} is not a valid email address.");
+		if(empty($this->Ad_Email)) {
+			throw new InvalidPropertyException("Ad_Email", "The email can't be empty");
+		} elseif(validateEmailAddress($this->Ad_Email) === false) {
+			throw new InvalidPropertyException("Ad_Email", "The email " . $this->Ad_Email . " is not a valid email address.");
 		}
 
-		if(empty($postalCode)) {
-			throw new Exception("The postal code can't be empty");
-		} elseif($departments->checkPostCode($postalCode) === false) {
-			throw new Exception("The postal code ${postalCode} is not a valid postal code.");
+		if(empty($this->Ad_Code)) {
+			throw new InvalidPropertyException("Ad_Code", "The postal code can't be empty");
+		} elseif($departments->checkPostCode($this->Ad_Code) === false) {
+			throw new InvalidPropertyException("Ad_Code", "The postal code " . $this->Ad_Code . " is not a valid postal code.");
 		}
 
-		return true;
+		/** Mark the data as valid (at this point) */
+		$this->_validData = true;
 	}
 
 	public function getCurrentList() {
 
+		/** Validate the data */
+		$this->validateData();
+
 		$mailman = Mailman::getInstance();
-		$matches = $mailman->find('#' . mb_strtolower($this->_email, 'UTF-8') . '#');
+		$matches = $mailman->find('#' . mb_strtolower($this->Ad_Email, 'UTF-8') . '#');
 
 		return $matches;
 	}
 
 	public function getLists() {
+
+		/** Validate the data */
+		$this->validateData();
 
 		/** Initialize the lists */
 		$lists = array('Membres');
@@ -125,11 +114,14 @@ class Person {
 
 	protected function _getListByPostCode() {
 
+		/** Validate the data */
+		$this->validateData();
+
 		/** Create a new instance of the departments class */
 		$departments = new Departements();
 
 		/** get the list */
-		$list = $departments->getDepartementCodeByZipCode($this->_postalCode);
+		$list = $departments->getDepartementCodeByZipCode($this->Ad_Code);
 
 		/** If there's no list found, suppose it's lebanon */
 		if($list === false) {
@@ -140,6 +132,9 @@ class Person {
 	}
 
 	public function ensureSubscriptions($currentSubscriptions = null) {
+
+		/** Validate the data */
+		$this->validateData();
 
 		/** Get an instance of the Mailman class */
 		$mailman = Mailman::getInstance();
@@ -152,7 +147,7 @@ class Person {
 			foreach($currentSubscriptions as $currentSubscription) {
 				if(in_array($currentSubscription, $lists) === false) {
 					$this->_logger->logEvent('UNSUBSCRIBE_USER', "Unsubscribing the user from the list ${currentSubscription}", true);
-					$mailman->unsubscribeMember($currentSubscription, $this->_email);
+					$mailman->unsubscribeMember($currentSubscription, $this->Ad_Email);
 				}
 			}
 		}
@@ -160,11 +155,12 @@ class Person {
 		/** Subscribe this member */
 		foreach($lists as $list) {
 			if($currentSubscriptions === null || (is_array($currentSubscriptions) && in_array($list, $currentSubscriptions) === false)) {
-				$mailman->subscribeMember($list, $this->_email);
+				$mailman->subscribeMember($list, $this->Ad_Email);
 			} else {
-				$this->_logger->logEvent('SUBSCRIBE_USER', "The user " . $this->_email . " has been skiped, he's already subscribed to the list ${list}", true);
+				$this->_logger->logEvent('SUBSCRIBE_USER', "The user " . $this->Ad_Email . " has been skiped, he's already subscribed to the list ${list}", true);
 			}
 		}
 	}
 }
+
 ?>

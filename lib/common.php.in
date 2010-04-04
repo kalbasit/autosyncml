@@ -33,15 +33,7 @@
  */
 function connectDb($adapter, $host, $user, $pwd, $db) {
 
-	$conn = NewADOConnection($adapter);
-	switch($adapter) {
-	case 'mysql':
-		$conn->connect($host, $user, $pwd, $db);
-		break;
-	case 'sqlite':
-		$conn->PConnect($db);
-		break;
-	}
+	$conn = new phpDataMapper_Adapter_Mysql($host, $db, $user, $pwd);
 
 	return $conn;
 }
@@ -59,9 +51,13 @@ function connectDbs() {
 	/** get the config */
 	$config = $registry->get('config');
 
+	/** Connect to the database */
 	$main = connectDb($config->main_adapter, $config->main_host, $config->main_user, $config->main_pwd, $config->main_db);
+	$copy = connectDb($config->copy_adapter, $config->copy_host, $config->copy_user, $config->copy_pwd, $config->copy_db);
 
-	ADOdb_Active_Record::SetDatabaseAdapter($main, 'main');
+	/** Register the connections in the registry */
+	$registry->set('main_connection', $main);
+	$registry->set('copy_connection', $copy);
 }
 
 /**
