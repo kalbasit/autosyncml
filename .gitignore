@@ -19,3 +19,7 @@ etc/*.ini
 .buildpath
 .project
 .settings/
+
+# Ignore backup files
+*~
+*.bak
