@@ -47,7 +47,7 @@ install: make-models-install make-classes-install make-exceptions-install
 	do \
 		$(INSTALL) -m 644 $${target} $(DESTDIR)$(autosyncmllibdir)/$${target}; \
 	done
-	@cp -a adodb $(DESTDIR)$(autosyncmllibdir)/adodb
+	@cp -a phpDataMapper $(DESTDIR)$(autosyncmllibdir)/phpDataMapper
 
 clean: make-models-clean make-classes-clean make-exceptions-clean
 	@for target in $(TARGETS) ; \

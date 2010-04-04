@@ -24,9 +24,8 @@
 /** exit if AUTOSYNCML not defined */
 defined('AUTOSYNCML') or die("You cannot use this file, please use @BINDIR@/autosyncml");
 
-/** Require php-activerecord */
-require_once(AUTOSYNCMLLIBDIR . DIRECTORY_SEPARATOR . 'adodb' . DIRECTORY_SEPARATOR . 'adodb.inc.php');
-require_once(AUTOSYNCMLLIBDIR . DIRECTORY_SEPARATOR . 'adodb' . DIRECTORY_SEPARATOR . 'adodb-active-record.inc.php');
+/** Require phpDataMapper */
+require_once(AUTOSYNCMLLIBDIR . DIRECTORY_SEPARATOR . 'phpDataMapper' . DIRECTORY_SEPARATOR . 'Base.php');
 
 /** require common */
 require_once(AUTOSYNCMLLIBDIR . DIRECTORY_SEPARATOR . 'common.php');

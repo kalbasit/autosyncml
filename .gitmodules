@@ -1,0 +1,3 @@
+[submodule "lib/phpDataMapper"]
+	path = lib/phpDataMapper
+	url = git://github.com/vlucas/phpDataMapper.git
