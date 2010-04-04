@@ -93,10 +93,20 @@ class Logger {
 		/** get the email */
 		$email = new Email();
 
+		/** Get the Registry instance */
+		$registry = Registry::getInstance();
+
+		/** get the config */
+		$config = $registry->get('config');
+
 		/** Set the receipient */
-		$recipients = explode(',', LOG_RECIPIENT);
-		foreach($recipients as $recipient) {
-			$email->addRecipient(trim($recipient));
+		if(strpos($config['LOG_RECIPIENT'], ',') !== false) {
+			$recipients = explode(',', $config['LOG_RECIPIENT']);
+			foreach($recipients as $recipient) {
+				$email->addRecipient(trim($recipient));
+			}
+		} else {
+			$email->addRecipient(trim($config['LOG_RECIPIENT']));
 		}
 
 		/** Set the subject */
