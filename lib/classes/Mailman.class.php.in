@@ -218,6 +218,7 @@ class Mailman {
 	 *  @param Array $email  : A string (email)
 	 *  @param String $mode  : The subscription mode, can either be non-digest or digest, Default : non-digest
 	 *  @return bool True on sucess
+	 *  throws Exception
 	 */
 	public function subscribeMember($list, $email, $mode = self::SUBSCRIPTION_MODE_NON_DIGEST) {
 
@@ -231,7 +232,7 @@ class Mailman {
 		}
 
 		/** log the Event */
-		$this->_logger->logEvent('SUBSCRIBE_MEMBER', "subscribeMember() been called with \$list='${list}', \$email='${email}', \$mode='${mode}'.");
+		$this->_logger->logEvent('SUBSCRIBE_MEMBER', "subscribeMember() been called with \$list='${list}', \$email='${email}', \$mode='${mode}'.", true);
 
 		/** Execute the shell command now to add the member */
 		$shellOutput = shell_exec("echo \"${email}\" | add_members ${mode} ${list}");
@@ -285,6 +286,7 @@ class Mailman {
 	 *  @param String $list  : The name of the mailing list for which we subscribe this user
 	 *  @param Array $email  : A string (email)
 	 *  @return bool True on sucess
+	 *  throws Exception
 	 */
 	public function unsubscribeMember($list, $email) {
 
@@ -298,7 +300,7 @@ class Mailman {
 		}
 
 		/** log the Event */
-		$this->_logger->logEvent('UNSUBSCRIBE_MEMBER', "unsubscribeMember() been called with \$list='${list}', \$email='${email}'");
+		$this->_logger->logEvent('UNSUBSCRIBE_MEMBER', "unsubscribeMember() been called with \$list='${list}', \$email='${email}'", true);
 
 		/** Execute the shell command now to remove the member */
 		$shellOutput = shell_exec("remove_members ${list} ${email}");
