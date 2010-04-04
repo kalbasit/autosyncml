@@ -30,6 +30,14 @@ define('COPYRIGHT', 'AutosyncML version @VERSION@ by Wael Nasreddine <wael.nasre
 /** Require all libraries */
 require_once(AUTOSYNCMLLIBDIR . DIRECTORY_SEPARATOR . 'include.php');
 
+/** Check for a lock, lock if necessary */
+$lock = "/tmp/autosyncml.lock";
+if(file_exists($lock) === true) {
+	exit();
+} else {
+	touch($lock);
+}
+
 /** Get the logger */
 $logger = Logger::getInstance();
 
@@ -144,5 +152,8 @@ foreach($mainPeopleSearch as $person) {
 
 /** Send the logs */
 $logger->sendLog();
+
+/** Remove the lock */
+unlink($lock);
 
 ?>
