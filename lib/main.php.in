@@ -52,6 +52,9 @@ $registry->set('config', $config);
 $controlFile = $config->control_file;
 if(empty($controlFile) === false) {
 	if(file_exists($controlFile) === false) {
+		/** Remove the lock */
+		unlink($lock);
+
 		/** The file doesn't exist, exit */
 		exit();
 	} else {
