@@ -60,8 +60,9 @@ Every minute:
 
 	*/1 * * * * export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin; /usr/bin/autosyncml
 
-To report bugs or ask for new features, please use the Tickets tab above.
+To report bugs or ask for new features, please use the Tickets tab on the project [page][]
 
 [Wael Nasreddine]: http://wael.nasreddine.com
 [Github]: http://github.com/eMxyzptlk/autosyncml
 [AULF]: http://www.aulf.org
+[page]: http://wael.nasreddine.com/projects/autosyncml.html
