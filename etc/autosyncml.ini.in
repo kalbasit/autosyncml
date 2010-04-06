@@ -5,6 +5,13 @@
 log_recipients = webmaster@aulf.org
 control_file =
 
+/**
+ * Default Mailing Lists
+ *
+ * All members are subscribed to these lists.
+ */
+default_mls[]	= Membres
+
 
 /**
  * Mysql Configurations

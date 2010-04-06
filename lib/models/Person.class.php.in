@@ -139,8 +139,15 @@ class Person extends phpDataMapper_Entity {
 		/** Validate the data */
 		$this->validateData();
 
+		/** Get the Registry instance */
+		$registry = Registry::getInstance();
+
+		/** get the config */
+		$config = $registry->get('config');
+
 		/** Initialize the lists */
-		$lists = array('Membres');
+		$lists = $config->default_mls;
+		pe('lists', $lists);
 
 		/** get the list by zip code */
 		$list = $this->_getListByPostCode();
