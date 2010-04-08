@@ -46,11 +46,16 @@ class Person extends phpDataMapper_Entity {
 	 */
 	public function __construct($data = null) {
 
+		/** Send the info to the parent class */
+		parent::__construct($data);
+
 		/** Get the logger */
 		$this->_logger = Logger::getInstance();
 
-		/** Send the info to the parent class */
-		parent::__construct($data);
+		/** Logging a create person */
+		if(!empty($this->Ad_Email)) {
+			$this->_logger->logEvent('CREATE_PERSON', 'The person ' . $this->Ad_Email . ' has just been created', true);
+		}
 	}
 
 	public function fields() {
