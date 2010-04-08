@@ -147,7 +147,6 @@ class Person extends phpDataMapper_Entity {
 
 		/** Initialize the lists */
 		$lists = $config->default_mls;
-		pe('lists', $lists);
 
 		/** get the list by zip code */
 		$list = $this->_getListByPostCode();
