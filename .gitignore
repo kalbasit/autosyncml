@@ -23,3 +23,6 @@ etc/*.ini
 # Ignore backup files
 *~
 *.bak
+
+# Ingore NetBeans project
+nbproject
