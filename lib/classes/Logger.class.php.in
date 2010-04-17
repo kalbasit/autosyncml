@@ -26,131 +26,131 @@ defined('AUTOSYNCML') or die("You cannot use this file, please use @BINDIR@/auto
 
 class Logger {
 
-	/** The entire log array */
-	protected static $_log = array();
+    /** The entire log array */
+    protected static $_log = array();
 
-	/** The log instance */
-	protected static $_instance = null;
+    /** The log instance */
+    protected static $_instance = null;
 
-	/** class name */
-	protected static $_className = 'Logger';
+    /** class name */
+    protected static $_className = 'Logger';
 
-	/** The date format */
-	protected $format = "Y-m-d H:i:s";
+    /** The date format */
+    protected $format = "Y-m-d H:i:s";
 
-	/** Construct */
-	protected function __construct() {
-		
-		/** Mark the log has started */
-		$this->logEvent('LOG_STARTED', 'The log has been opened');
+    /** Construct */
+    protected function __construct() {
+
+	/** Mark the log has started */
+	$this->logEvent('LOG_STARTED', 'The log has been opened');
+    }
+
+    public static function getInstance() {
+
+	if(self::$_instance === null || !(self::$_instance instanceof self::$_className)) {
+	    self::$_instance = new self::$_className();
 	}
 
-	public static function getInstance() {
+	return self::$_instance;
+    }
 
-		if(self::$_instance === null || !(self::$_instance instanceof self::$_className)) {
-			self::$_instance = new self::$_className();
+    /** logEvent */
+    public function logEvent($type, $message, $debug = false) {
+
+	/** Undebug the previous CREATE_USER if necessary */
+	if($type != 'CREATE_PERSON' && $type != 'LOG_STARTED' && $type != 'LOG_CLOSED' && $debug === false) {
+	    $this->unDebugLast('CREATE_PERSON');
+	}
+
+	/** Record the event */
+	$event = array(
+		'date' => date($this->format),
+		'type' => $type,
+		'message' => $message,
+		'debug' => $debug,
+	);
+
+	self::$_log[] = $event;
+    }
+
+    public function getLog($debug = false) {
+
+	$log = '';
+	foreach(self::$_log as $event) {
+	    if(($debug === false && $event['debug'] === false) || $debug === true) {
+		$log .= '[' . $event['date'] . '] ' . $event['type'] . ': ' . $event['message'] . "\n";
+	    }
+	}
+
+	return $log;
+    }
+
+    public function sendLog() {
+
+	/** Mark the end of the logs */
+	$this->logEvent('LOG_CLOSED', 'the log has been closed.');
+
+	/** get the email */
+	$email = new Email();
+
+	/** Get the Registry instance */
+	$registry = Registry::getInstance();
+
+	/** get the config */
+	$config = $registry->get('config');
+
+	/** Set the receipient */
+	if(strpos($config->log_recipients, ',') !== false) {
+	    $recipients = explode(',', $config->log_recipients);
+	    foreach($recipients as $recipient) {
+		$email->addRecipient(trim($recipient));
+	    }
+	} else {
+	    $email->addRecipient(trim($config->log_recipients));
+	}
+
+	/** Set the subject */
+	$email->setSubject('AutosyncML LOG ' . date($this->format));
+
+	/** Set the message */
+	$message = $this->getLog() . $this->_getSignature();
+
+	/** Set the email body */
+	$email->setMessage($message);
+
+	/** Send the email */
+	$email->send();
+    }
+
+    protected function _getSignature() {
+
+	$signature = "\n\n-- \n\n";
+	$signature .= COPYRIGHT;
+
+	return $signature;
+    }
+
+    public function unDebugLast($type) {
+
+	/** iterate on the logs from the end, get the key of the last element of $type type */
+	end(self::$_log);
+	$key = null;
+	while($key === null) {
+	    $current = current(self::$_log);
+	    if($current['type'] == $type) {
+		$key = key(self::$_log);
+	    } else {
+		$result = prev(self::$_log);
+		if($result === false) {
+		    break;
 		}
-
-		return self::$_instance;
+	    }
 	}
 
-	/** logEvent */
-	public function logEvent($type, $message, $debug = false) {
-
-		/** Undebug the previous CREATE_USER if necessary */
-		if($type != 'CREATE_PERSON' && $type != 'LOG_STARTED' && $type != 'LOG_CLOSED' && $debug === false) {
-			$this->unDebugLast('CREATE_PERSON');
-		}
-
-		/** Record the event */
-		$event = array(
-			'date' => date($this->format),
-			'type' => $type,
-			'message' => $message,
-			'debug' => $debug,
-		);
-
-		self::$_log[] = $event;
+	/** If the current element's type is CREATE_USER set the debug to false */
+	if($key !== null) {
+	    self::$_log[$key]['debug'] = false;
 	}
-
-	public function getLog($debug = false) {
-
-		$log = '';
-		foreach(self::$_log as $event) {
-			if(($debug === false && $event['debug'] === false) || $debug === true) {
-				$log .= '[' . $event['date'] . '] ' . $event['type'] . ': ' . $event['message'] . "\n";
-			}
-		}
-
-		return $log;
-	}
-
-	public function sendLog() {
-
-		/** Mark the end of the logs */
-		$this->logEvent('LOG_CLOSED', 'the log has been closed.');
-
-		/** get the email */
-		$email = new Email();
-
-		/** Get the Registry instance */
-		$registry = Registry::getInstance();
-
-		/** get the config */
-		$config = $registry->get('config');
-
-		/** Set the receipient */
-		if(strpos($config->log_recipients, ',') !== false) {
-			$recipients = explode(',', $config->log_recipients);
-			foreach($recipients as $recipient) {
-				$email->addRecipient(trim($recipient));
-			}
-		} else {
-			$email->addRecipient(trim($config->log_recipients));
-		}
-
-		/** Set the subject */
-		$email->setSubject('AutosyncML LOG ' . date($this->format));
-
-		/** Set the message */
-		$message = $this->getLog() . $this->_getSignature();
-
-		/** Set the email body */
-		$email->setMessage($message);
-
-		/** Send the email */
-		$email->send();
-	}
-
-	protected function _getSignature() {
-
-		$signature = "\n\n-- \n\n";
-		$signature .= COPYRIGHT;
-
-		return $signature;
-	}
-
-	public function unDebugLast($type) {
-
-		/** iterate on the logs from the end, get the key of the last element of $type type */
-		end(self::$_log);
-		$key = null;
-		while($key === null) {
-			$current = current(self::$_log);
-			if($current['type'] == $type) {
-				$key = key(self::$_log);
-			} else {
-				$result = prev(self::$_log);
-				if($result === false) {
-					break;
-				}
-			}
-		}
-
-		/** If the current element's type is CREATE_USER set the debug to false */
-		if($key !== null) {
-			self::$_log[$key]['debug'] = false;
-		}
-	}
+    }
 }
 ?>

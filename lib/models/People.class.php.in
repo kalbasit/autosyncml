@@ -26,89 +26,89 @@ defined('AUTOSYNCML') or die("You cannot use this file, please use @BINDIR@/auto
 
 class People extends phpDataMapper_Base {
 
-	/** The table */
-	protected $source = null;
+    /** The table */
+    protected $source = null;
 
-	/** Set custom row class name */
-	protected $_entityClass = 'Person';
+    /** Set custom row class name */
+    protected $_entityClass = 'Person';
 
-	/** The fields */
-	public $Ad_ID					= array('type' => 'int', 'primary' => true, 'serial' => true);
-	public $Ad_Titre				= array('type' => 'string', 'length' => 5, 'required' => false);
-	public $Ad_Nom					= array('type' => 'string', 'length' => 30, 'required' => false);
-	public $Ad_Prenom				= array('type' => 'string', 'length' => 30, 'required' => false);
-	public $Ad_Login				= array('type' => 'string', 'length' => 40, 'required' => false);
-	public $Ad_Password				= array('type' => 'string', 'length' => 12, 'required' => false);
-	public $Ad_alacarte				= array('type' => 'string', 'length' => 3, 'required' => false, 'default' => 'non');
-	public $Ad_Nationalite			= array('type' => 'string', 'length' => 40, 'required' => false);
-	public $Ad_Email				= array('type' => 'string', 'length' => 50, 'required' => false);
-	public $Ad_Adresse				= array('type' => 'text', 'required' => false);
-	public $Ad_Code					= array('type' => 'string', 'length' => 5, 'required' => false);
-	public $Ad_Ville				= array('type' => 'string', 'length' => 25, 'required' => false);
-	public $Ad_TypeAdhesion			= array('type' => 'string', 'length' => 2, 'required' => false);
-	public $Ad_Pays					= array('type' => 'string', 'length' => 30, 'required' => false);
-	public $Ad_JourN				= array('type' => 'string', 'length' => 2, 'required' => false);
-	public $Ad_MoisN				= array('type' => 'string', 'length' => 2, 'required' => false);
-	public $Ad_AnneeN				= array('type' => 'string', 'length' => 4, 'required' => false);
-	public $Ad_TelP					= array('type' => 'string', 'length' => 15, 'required' => false);
-	public $Ad_TelF					= array('type' => 'string', 'length' => 15, 'required' => false);
-	public $Ad_DernierDiplome		= array('type' => 'text', 'required' => false);
-	public $Ad_NiveauEtude			= array('type' => 'string', 'length' => 35, 'required' => false);
-	public $Ad_EAU					= array('type' => 'text', 'required' => false);
-	public $Ad_Specialite			= array('type' => 'string', 'length' => 100, 'required' => false);
-	public $Ad_DomaineCompetence	= array('type' => 'text', 'required' => false);
-	public $Ad_DateAdhesion			= array('type' => 'string', 'length' => 10, 'required' => false);
-	public $Ad_DateMaj				= array('type' => 'string', 'length' => 10, 'required' => false);
+    /** The fields */
+    public $Ad_ID				= array('type' => 'int', 'primary' => true, 'serial' => true);
+    public $Ad_Titre				= array('type' => 'string', 'length' => 5, 'required' => false);
+    public $Ad_Nom				= array('type' => 'string', 'length' => 30, 'required' => false);
+    public $Ad_Prenom				= array('type' => 'string', 'length' => 30, 'required' => false);
+    public $Ad_Login				= array('type' => 'string', 'length' => 40, 'required' => false);
+    public $Ad_Password				= array('type' => 'string', 'length' => 12, 'required' => false);
+    public $Ad_alacarte				= array('type' => 'string', 'length' => 3, 'required' => false, 'default' => 'non');
+    public $Ad_Nationalite			= array('type' => 'string', 'length' => 40, 'required' => false);
+    public $Ad_Email				= array('type' => 'string', 'length' => 50, 'required' => false);
+    public $Ad_Adresse				= array('type' => 'text', 'required' => false);
+    public $Ad_Code				= array('type' => 'string', 'length' => 5, 'required' => false);
+    public $Ad_Ville				= array('type' => 'string', 'length' => 25, 'required' => false);
+    public $Ad_TypeAdhesion			= array('type' => 'string', 'length' => 2, 'required' => false);
+    public $Ad_Pays				= array('type' => 'string', 'length' => 30, 'required' => false);
+    public $Ad_JourN				= array('type' => 'string', 'length' => 2, 'required' => false);
+    public $Ad_MoisN				= array('type' => 'string', 'length' => 2, 'required' => false);
+    public $Ad_AnneeN				= array('type' => 'string', 'length' => 4, 'required' => false);
+    public $Ad_TelP				= array('type' => 'string', 'length' => 15, 'required' => false);
+    public $Ad_TelF				= array('type' => 'string', 'length' => 15, 'required' => false);
+    public $Ad_DernierDiplome			= array('type' => 'text', 'required' => false);
+    public $Ad_NiveauEtude			= array('type' => 'string', 'length' => 35, 'required' => false);
+    public $Ad_EAU				= array('type' => 'text', 'required' => false);
+    public $Ad_Specialite			= array('type' => 'string', 'length' => 100, 'required' => false);
+    public $Ad_DomaineCompetence		= array('type' => 'text', 'required' => false);
+    public $Ad_DateAdhesion			= array('type' => 'string', 'length' => 10, 'required' => false);
+    public $Ad_DateMaj				= array('type' => 'string', 'length' => 10, 'required' => false);
 
-	/**
-	 * On init make sure the database is up-to-date
-	 */
-	public function init() {
+    /**
+     * On init make sure the database is up-to-date
+     */
+    public function init() {
 
-		$this->migrate();
-	}
+	$this->migrate();
+    }
 }
 
 class MainPeople extends People {
 
-	/**
-	 *	Constructor Method
-	 */
-	public function __construct(phpDataMapper_Adapter_Interface $adapter, $adapterRead = null) {
+    /**
+     *	Constructor Method
+     */
+    public function __construct(phpDataMapper_Adapter_Interface $adapter, $adapterRead = null) {
 
-		/** Get the Registry instance */
-		$registry = Registry::getInstance();
+	/** Get the Registry instance */
+	$registry = Registry::getInstance();
 
-		/** get the config */
-		$config = $registry->get('config');
+	/** get the config */
+	$config = $registry->get('config');
 
-		/** Set the source */
-		$this->source = $config->main_table;
+	/** Set the source */
+	$this->source = $config->main_table;
 
-		/** send the adapter to the parent class */
-		parent::__construct($adapter, $adapterRead);
-	}
+	/** send the adapter to the parent class */
+	parent::__construct($adapter, $adapterRead);
+    }
 }
 
 class CopyPeople extends People {
 
-	/**
-	 *	Constructor Method
-	 */
-	public function __construct(phpDataMapper_Adapter_Interface $adapter, $adapterRead = null) {
+    /**
+     *	Constructor Method
+     */
+    public function __construct(phpDataMapper_Adapter_Interface $adapter, $adapterRead = null) {
 
-		/** Get the Registry instance */
-		$registry = Registry::getInstance();
+	/** Get the Registry instance */
+	$registry = Registry::getInstance();
 
-		/** get the config */
-		$config = $registry->get('config');
+	/** get the config */
+	$config = $registry->get('config');
 
-		/** Set the source */
-		$this->source = $config->copy_table;
+	/** Set the source */
+	$this->source = $config->copy_table;
 
-		/** send the adapter to the parent class */
-		parent::__construct($adapter, $adapterRead);
-	}
+	/** send the adapter to the parent class */
+	parent::__construct($adapter, $adapterRead);
+    }
 }
 
 ?>

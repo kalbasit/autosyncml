@@ -26,26 +26,26 @@ defined('AUTOSYNCML') or die("You cannot use this file, please use @BINDIR@/auto
 
 class InvalidPropertyException extends Exception {
 
-	protected $_type = null;
+    protected $_type = null;
 
-	/**
-	 * Construct the exception
-	 *
-	 * @param  string $msg
-	 * @param  int $code
-	 * @return void
-	 */
-	public function __construct($type, $msg = '', $code = 0) {
+    /**
+     * Construct the exception
+     *
+     * @param  string $msg
+     * @param  int $code
+     * @return void
+     */
+    public function __construct($type, $msg = '', $code = 0) {
 
-		$this->_type = $type;
+	$this->_type = $type;
 
-		parent::__construct($msg, (int) $code);
-	}
+	parent::__construct($msg, (int) $code);
+    }
 
-	public function getType() {
+    public function getType() {
 
-		return $this->_type;
-	}
+	return $this->_type;
+    }
 }
 
 ?>

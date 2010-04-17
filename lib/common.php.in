@@ -33,9 +33,9 @@
  */
 function connectDb($adapter, $host, $user, $pwd, $db) {
 
-	$conn = new phpDataMapper_Adapter_Mysql($host, $db, $user, $pwd);
+    $conn = new phpDataMapper_Adapter_Mysql($host, $db, $user, $pwd);
 
-	return $conn;
+    return $conn;
 }
 
 /**
@@ -45,19 +45,19 @@ function connectDb($adapter, $host, $user, $pwd, $db) {
  */
 function connectDbs() {
 
-	/** Get the Registry instance */
-	$registry = Registry::getInstance();
+    /** Get the Registry instance */
+    $registry = Registry::getInstance();
 
-	/** get the config */
-	$config = $registry->get('config');
+    /** get the config */
+    $config = $registry->get('config');
 
-	/** Connect to the database */
-	$main = connectDb($config->main_adapter, $config->main_host, $config->main_user, $config->main_pwd, $config->main_db);
-	$copy = connectDb($config->copy_adapter, $config->copy_host, $config->copy_user, $config->copy_pwd, $config->copy_db);
+    /** Connect to the database */
+    $main = connectDb($config->main_adapter, $config->main_host, $config->main_user, $config->main_pwd, $config->main_db);
+    $copy = connectDb($config->copy_adapter, $config->copy_host, $config->copy_user, $config->copy_pwd, $config->copy_db);
 
-	/** Register the connections in the registry */
-	$registry->set('main_connection', $main);
-	$registry->set('copy_connection', $copy);
+    /** Register the connections in the registry */
+    $registry->set('main_connection', $main);
+    $registry->set('copy_connection', $copy);
 }
 
 /**
@@ -69,50 +69,50 @@ function connectDbs() {
  */
 function validateEmailAddress($email) {
 
-	// First, we check that there's one @ symbol,
-	// and that the lengths are right.
-	if (!preg_match(":^[^@]{1,64}@[^@]{1,255}$:", $email)) {
-		// Email invalid because wrong number of characters
-		// in one section or wrong number of @ symbols.
+    // First, we check that there's one @ symbol,
+    // and that the lengths are right.
+    if (!preg_match(":^[^@]{1,64}@[^@]{1,255}$:", $email)) {
+	// Email invalid because wrong number of characters
+	// in one section or wrong number of @ symbols.
+	return false;
+    }
+
+    // Split it into sections to make life easier
+    $email_array = explode("@", $email);
+    $local_array = explode(".", $email_array[0]);
+    for ($i = 0; $i < sizeof($local_array); $i++) {
+	if (!preg_match(":^(([A-Za-z0-9!#$%&'*+/=?^_`{|}~-][A-Za-z0-9!#$%&'*+/=?^_`{|}~\.-]{0,63})|(\"[^(\\|\")]{0,62}\"))$:", $local_array[$i])) {
+	    return false;
+	}
+    }
+
+    // Check if domain is IP. If not,
+    // it should be valid domain name
+    if (!preg_match(":^\[?[0-9\.]+\]?$:", $email_array[1])) {
+	$domain_array = explode(".", $email_array[1]);
+	if (sizeof($domain_array) < 2) {
+	    return false; // Not enough parts to domain
+	}
+	for ($i = 0; $i < sizeof($domain_array); $i++) {
+	    if (!preg_match(":^(([A-Za-z0-9][A-Za-z0-9-]{0,61}[A-Za-z0-9])|([A-Za-z0-9]+))$:", $domain_array[$i])) {
 		return false;
+	    }
 	}
+    }
 
-	// Split it into sections to make life easier
-	$email_array = explode("@", $email);
-	$local_array = explode(".", $email_array[0]);
-	for ($i = 0; $i < sizeof($local_array); $i++) {
-		if (!preg_match(":^(([A-Za-z0-9!#$%&'*+/=?^_`{|}~-][A-Za-z0-9!#$%&'*+/=?^_`{|}~\.-]{0,63})|(\"[^(\\|\")]{0,62}\"))$:", $local_array[$i])) {
-			return false;
-		}
-	}
-
-	// Check if domain is IP. If not,
-	// it should be valid domain name
-	if (!preg_match(":^\[?[0-9\.]+\]?$:", $email_array[1])) {
-		$domain_array = explode(".", $email_array[1]);
-		if (sizeof($domain_array) < 2) {
-			return false; // Not enough parts to domain
-		}
-		for ($i = 0; $i < sizeof($domain_array); $i++) {
-			if (!preg_match(":^(([A-Za-z0-9][A-Za-z0-9-]{0,61}[A-Za-z0-9])|([A-Za-z0-9]+))$:", $domain_array[$i])) {
-				return false;
-			}
-		}
-	}
-
-	return true;
+    return true;
 }
 
 function pp($message, $object) {
-	echo "==> " . $message . "\n";
-	echo "\n";
-	print_r($object);
-	echo "\n";
+    echo "==> " . $message . "\n";
+    echo "\n";
+    print_r($object);
+    echo "\n";
 }
 
 function pe($message, $object) {
-	pp($message, $object);
-	exit();
+    pp($message, $object);
+    exit();
 }
 
 ?>

@@ -33,9 +33,9 @@ require_once(AUTOSYNCMLLIBDIR . DIRECTORY_SEPARATOR . 'include.php');
 /** Check for a lock, lock if necessary */
 $lock = "/tmp/autosyncml.lock";
 if(file_exists($lock) === true) {
-	exit();
+    exit();
 } else {
-	touch($lock);
+    touch($lock);
 }
 
 /** Get the logger */
@@ -51,16 +51,16 @@ $registry->set('config', $config);
 /** Verify if we should be running or not */
 $controlFile = $config->control_file;
 if(empty($controlFile) === false) {
-	if(file_exists($controlFile) === false) {
-		/** Remove the lock */
-		unlink($lock);
+    if(file_exists($controlFile) === false) {
+	/** Remove the lock */
+	unlink($lock);
 
-		/** The file doesn't exist, exit */
-		exit();
-	} else {
-		/** The file exists, just remove it */
-		unlink($controlFile);
-	}
+	/** The file doesn't exist, exit */
+	exit();
+    } else {
+	/** The file exists, just remove it */
+	unlink($controlFile);
+    }
 }
 
 /** Prepare the database connections */
@@ -79,78 +79,78 @@ $mainPeopleSearch = $mainPeople->all();
 
 foreach($mainPeopleSearch as $person) {
 
-	/** Get the subscribed list */
-	try {
-		$subscribedLists = $person->getCurrentList();
-	} catch(InvalidPropertyException $e) {
-		$logger->logEvent('EXCEPTION', $e->getMessage());
-		continue;
-	} catch(Exception $e) {
-		$logger->logEvent('EXCEPTION', $e->getMessage());
-		continue;
+    /** Get the subscribed list */
+    try {
+	$subscribedLists = $person->getCurrentList();
+    } catch(InvalidPropertyException $e) {
+	$logger->logEvent('EXCEPTION', $e->getMessage());
+	continue;
+    } catch(Exception $e) {
+	$logger->logEvent('EXCEPTION', $e->getMessage());
+	continue;
+    }
+
+    if(empty($subscribedLists)) {
+	$logger->logEvent('USER_UNKNOWN', "The user " . $person->Ad_Email . " is not subscribed to any existing list, we will subscribe him to his list.", true);
+	$subscribedListsList = null;
+    } else {
+	/** Initialize the lists array */
+	$subscribedListsList = array();
+
+	/** Get all the lists to which the user is subscribed */
+	foreach($subscribedLists as $subscribedList => $subscribedEmail) {
+	    $subscribedListsList[] = $subscribedList;
 	}
 
-	if(empty($subscribedLists)) {
-		$logger->logEvent('USER_UNKNOWN', "The user " . $person->Ad_Email . " is not subscribed to any existing list, we will subscribe him to his list.", true);
-		$subscribedListsList = null;
-	} else {
-		/** Initialize the lists array */
-		$subscribedListsList = array();
+	/** Log the Event */
+	$logger->logEvent('USER_KNOWN', "The user " . $person->Ad_Email . " is known and subscribed to the following lists: " . implode(', ', $subscribedListsList), true);
+    }
 
-		/** Get all the lists to which the user is subscribed */
-		foreach($subscribedLists as $subscribedList => $subscribedEmail) {
-			$subscribedListsList[] = $subscribedList;
+    /** Check if the user has changed his email */
+    $copy_person = $copyPeople->get($person->Ad_ID);
+    $copy_person_fields = $person->toArray();
+    if(!empty($copy_person->Ad_Email)) {
+	/** If the email has changed, unsubscribe the old email */
+	if($person->Ad_Email != $copy_person->Ad_Email) {
+	    /** Get the subscribed list for the old email */
+	    $copy_person_subscribedLists = $copy_person->getCurrentList();
+	    if(!empty($copy_person_subscribedLists)) {
+		foreach($copy_person_subscribedLists as $subscribedList => $subscribedEmail) {
+		    try {
+			$mailman->unsubscribeMember($subscribedList, $copy_person->Ad_Email);
+		    } catch(InvalidPropertyException $e) {
+			$logger->logEvent('EXCEPTION', $e->getMessage());
+			continue;
+		    } catch(Exception $e) {
+			$logger->logEvent('EXCEPTION', $e->getMessage());
+			continue;
+		    }
 		}
-
-		/** Log the Event */
-		$logger->logEvent('USER_KNOWN', "The user " . $person->Ad_Email . " is known and subscribed to the following lists: " . implode(', ', $subscribedListsList), true);
+	    }
 	}
+    } else {
+	unset($copy_person_fields['Ad_ID']);
+    }
 
-	/** Check if the user has changed his email */
-	$copy_person = $copyPeople->get($person->Ad_ID);
-	$copy_person_fields = $person->toArray();
-	if(!empty($copy_person->Ad_Email)) {
-		/** If the email has changed, unsubscribe the old email */
-		if($person->Ad_Email != $copy_person->Ad_Email) {
-			/** Get the subscribed list for the old email */
-			$copy_person_subscribedLists = $copy_person->getCurrentList();
-			if(!empty($copy_person_subscribedLists)) {
-				foreach($copy_person_subscribedLists as $subscribedList => $subscribedEmail) {
-					try {
-						$mailman->unsubscribeMember($subscribedList, $copy_person->Ad_Email);
-					} catch(InvalidPropertyException $e) {
-						$logger->logEvent('EXCEPTION', $e->getMessage());
-						continue;
-					} catch(Exception $e) {
-						$logger->logEvent('EXCEPTION', $e->getMessage());
-						continue;
-					}
-				}
-			}
-		}
-	} else {
-		unset($copy_person_fields['Ad_ID']);
-	}
+    /** Either way update the copy */
+    $copy_person = $copyPeople->get()->data($copy_person_fields);
+    $copy_person_saved = $copyPeople->save($copy_person);
 
-	/** Either way update the copy */
-	$copy_person = $copyPeople->get()->data($copy_person_fields);
-	$copy_person_saved = $copyPeople->save($copy_person);
+    /** Sanity check on the copy_person */
+    if(!$copy_person_saved) {
+	$logger->logEvent('EXCEPTION', "Copying the user " . $person->Ad_Email . " has failed, errors: " . implode(',', $copyPeople->errors()));
+    }
 
-	/** Sanity check on the copy_person */
-	if(!$copy_person_saved) {
-		$logger->logEvent('EXCEPTION', "Copying the user " . $person->Ad_Email . " has failed, errors: " . implode(',', $copyPeople->errors()));
-	}
-
-	/** Subscribe / Unsubscibe the user if necessary */
-	try {
-		$person->ensureSubscriptions($subscribedListsList);
-	} catch(InvalidPropertyException $e) {
-		$logger->logEvent('EXCEPTION', $e->getMessage());
-		continue;
-	} catch(Exception $e) {
-		$logger->logEvent('EXCEPTION', $e->getMessage());
-		continue;
-	}
+    /** Subscribe / Unsubscibe the user if necessary */
+    try {
+	$person->ensureSubscriptions($subscribedListsList);
+    } catch(InvalidPropertyException $e) {
+	$logger->logEvent('EXCEPTION', $e->getMessage());
+	continue;
+    } catch(Exception $e) {
+	$logger->logEvent('EXCEPTION', $e->getMessage());
+	continue;
+    }
 }
 
 /** Send the logs */

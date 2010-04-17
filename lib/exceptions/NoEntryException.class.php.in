@@ -26,17 +26,17 @@ defined('AUTOSYNCML') or die("You cannot use this file, please use @BINDIR@/auto
 
 class NoEntryException extends Exception {
 
-	/**
-	 * Construct the exception
-	 *
-	 * @param  string $msg
-	 * @param  int $code
-	 * @return void
-	 */
-	public function __construct($msg = '', $code = 0) {
+    /**
+     * Construct the exception
+     *
+     * @param  string $msg
+     * @param  int $code
+     * @return void
+     */
+    public function __construct($msg = '', $code = 0) {
 
-		parent::__construct($msg, (int) $code);
-	}
+	parent::__construct($msg, (int) $code);
+    }
 }
 
 ?>

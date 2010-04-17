@@ -26,323 +26,323 @@ defined('AUTOSYNCML') or die("You cannot use this file, please use @BINDIR@/auto
 
 class Mailman {
 
-	/** The $_lists array */
-	private static $_lists = array();
+    /** The $_lists array */
+    private static $_lists = array();
 
-	/** The $_members array */
-	private static $_members = array();
+    /** The $_members array */
+    private static $_members = array();
 
-	/** The logger */
-	protected $_logger;
+    /** The logger */
+    protected $_logger;
 
-	/** class name */
-	protected static $_className = 'Mailman';
+    /** class name */
+    protected static $_className = 'Mailman';
 
-	/** The Mailman instance */
-	protected static $_instance = null;
+    /** The Mailman instance */
+    protected static $_instance = null;
 
-	/** The subscriptions modes */
-	const SUBSCRIPTION_MODE_NON_DIGEST = '-r -';
-	const SUBSCRIPTION_MODE_DIGEST = '-d -';
+    /** The subscriptions modes */
+    const SUBSCRIPTION_MODE_NON_DIGEST = '-r -';
+    const SUBSCRIPTION_MODE_DIGEST = '-d -';
 
-	/**
-	 *  Construct
-	 *
-	 *  @return Mailman
-	 */
-	protected function __construct() {
+    /**
+     *  Construct
+     *
+     *  @return Mailman
+     */
+    protected function __construct() {
 
-		$this->_logger = Logger::getInstance();
+	$this->_logger = Logger::getInstance();
+    }
+
+    public static function getInstance() {
+
+	if(self::$_instance === null || !(self::$_instance instanceof self::$_className)) {
+	    self::$_instance = new self::$_className();
 	}
 
-	public static function getInstance() {
+	return self::$_instance;
+    }
 
-		if(self::$_instance === null || !(self::$_instance instanceof self::$_className)) {
-			self::$_instance = new self::$_className();
-		}
+    /**
+     *  Get all lists in mailman
+     *
+     *  @return void
+     */
+    protected function _getAllLists() {
 
-		return self::$_instance;
+	/** log the Event */
+	$this->_logger->logEvent('GET_ALL_LISTS', '_getAllLists() has been called.', true);
+
+	/** Get the output of list_lists */
+	$shellOutput = shell_exec("list_lists");
+
+	/** Split the output into an array of lines */
+	$shellOutput = explode("\n", $shellOutput);
+
+	/** for each line, take only the name of the list */
+	foreach($shellOutput as $outputLine) {
+	    preg_match('#[ \t]*([a-zA-Z0-9_\-]+) - .*#i', $outputLine, $matches);
+	    $ml = trim($matches[1]);
+	    if(!empty($ml)) {
+		self::$_lists[] = $ml;
+	    }
 	}
 
-	/**
-	 *  Get all lists in mailman
-	 *
-	 *  @return void
-	 */
-	protected function _getAllLists() {
+    }
 
-		/** log the Event */
-		$this->_logger->logEvent('GET_ALL_LISTS', '_getAllLists() has been called.', true);
+    /**
+     *  Get all members in mailman
+     *
+     *  @return void
+     */
+    protected function _getAllMembers() {
 
-		/** Get the output of list_lists */
-		$shellOutput = shell_exec("list_lists");
+	/** log the Event */
+	$this->_logger->logEvent('GET_ALL_MEMBERS', '_getAllMembers() has been called.', true);
 
-		/** Split the output into an array of lines */
-		$shellOutput = explode("\n", $shellOutput);
-
-		/** for each line, take only the name of the list */
-		foreach($shellOutput as $outputLine) {
-			preg_match('#[ \t]*([a-zA-Z0-9_\-]+) - .*#i', $outputLine, $matches);
-			$ml = trim($matches[1]);
-			if(!empty($ml)) {
-				self::$_lists[] = $ml;
-			}
-		}
-
+	/** Make sure the lists are read */
+	if(empty(self::$_lists)) {
+	    $this->_getAllLists();
 	}
 
-	/**
-	 *  Get all members in mailman
-	 *
-	 *  @return void
-	 */
-	protected function _getAllMembers() {
+	/** Loop on each list getting the members */
+	foreach(self::$_lists as $list) {
+	    /** Get the output of list_members ${list} */
+	    $shellOutput = shell_exec("list_members ${list}");
 
-		/** log the Event */
-		$this->_logger->logEvent('GET_ALL_MEMBERS', '_getAllMembers() has been called.', true);
+	    /** Split the output into an array of lines */
+	    $shellOutput = explode("\n", $shellOutput);
 
-		/** Make sure the lists are read */
-		if(empty(self::$_lists)) {
-			$this->_getAllLists();
+	    /** remove the empty strings */
+	    $members = array();
+	    foreach($shellOutput as $line) {
+		$line = trim($line);
+		if(!empty($line)) {
+		    $members[] = $line;
 		}
+	    }
 
-		/** Loop on each list getting the members */
-		foreach(self::$_lists as $list) {
-			/** Get the output of list_members ${list} */
-			$shellOutput = shell_exec("list_members ${list}");
+	    /** Aggregate the list of members to the list in members */
+	    if(!empty($members)) {
+		self::$_members[$list] = $members;
+	    }
+	}
+    }
 
-			/** Split the output into an array of lines */
-			$shellOutput = explode("\n", $shellOutput);
+    /**
+     *  Accessor to the available lists
+     *
+     *  @return Array
+     */
+    public function getLists() {
 
-			/** remove the empty strings */
-			$members = array();
-			foreach($shellOutput as $line) {
-				$line = trim($line);
-				if(!empty($line)) {
-					$members[] = $line;
-				}
-			}
-
-			/** Aggregate the list of members to the list in members */
-			if(!empty($members)) {
-				self::$_members[$list] = $members;
-			}
-		}
+	/** If the lists hasn't been generated, do that */
+	if(empty(self::$_lists)) {
+	    $this->_getAllLists();
 	}
 
-	/**
-	 *  Accessor to the available lists
-	 *
-	 *  @return Array
-	 */
-	public function getLists() {
+	return self::$_lists;
+    }
 
-		/** If the lists hasn't been generated, do that */
-		if(empty(self::$_lists)) {
-			$this->_getAllLists();
-		}
+    /**
+     *  Accessor to the available members
+     *
+     *  @return Array
+     */
+    public function getMembers() {
 
-		return self::$_lists;
+	/** If the members hasn't been generated, do that */
+	if(empty(self::$_members)) {
+	    $this->_getAllMembers();
 	}
 
-	/**
-	 *  Accessor to the available members
-	 *
-	 *  @return Array
-	 */
-	public function getMembers() {
+	return self::$_members;
+    }
 
-		/** If the members hasn't been generated, do that */
-		if(empty(self::$_members)) {
-			$this->_getAllMembers();
-		}
+    /**
+     *  A function used to find a members in a mailing list
+     *
+     *  @param String $pattern : RegEX pattern used to find a member in lists, preg_match compatible pattern.
+     *  @return Array : [list] => email
+     */
+    public function find($pattern) {
 
-		return self::$_members;
-	}
+	/** Initialize the result array */
+	$foundPatterns = array();
 
-	/**
-	 *  A function used to find a members in a mailing list
-	 *
-	 *  @param String $pattern : RegEX pattern used to find a member in lists, preg_match compatible pattern.
-	 *  @return Array : [list] => email
-	 */
-	public function find($pattern) {
+	/** Get the members */
+	$allMembers = $this->getMembers();
 
-		/** Initialize the result array */
-		$foundPatterns = array();
-
-		/** Get the members */
-		$allMembers = $this->getMembers();
-
-		/** Find the pattern */
-		foreach($allMembers as $list => $members) {
-			foreach($members as $member) {
-				/** preg_match this member */
-				preg_match($pattern, $member, $matches);
-				/** If there's any results Add it to big result array */
-				if(count($matches) > 0) {
-					$foundPatterns[$list] = $member;
-				}
-			}
-		}
-
-		return $foundPatterns;
-	}
-
-	/**
-	 *  Subscribe members to a list
-	 *
-	 *  @param String $list  : The name of the mailing list for which we subscribe this user
-	 *  @param Array $emails : An array of emails to subscribe to mailing list
-	 *  @param String $mode  : The subscription mode, can either be non-digest or digest, Default : non-digest
-	 *  @return bool True on sucess
-	 */
-	public function subscribeMembers($list, $emails, $mode = self::SUBSCRIPTION_MODE_NON_DIGEST) {
-
-		/** Initialize the result */
-		$result = true;
-
-		/** Iterate throught the emails adding them one by one */
-		foreach($emails as $email) {
-			$localResult = $this->subscribeMember($list, $email, $mode);
-			$result = $result && $localResult;
-		}
-
-		return $result;
-	}
-
-	/**
-	 *  Subscribe a member to a list
-	 *
-	 *  @param String $list  : The name of the mailing list for which we subscribe this user
-	 *  @param Array $email  : A string (email)
-	 *  @param String $mode  : The subscription mode, can either be non-digest or digest, Default : non-digest
-	 *  @return bool True on sucess
-	 *  throws Exception
-	 */
-	public function subscribeMember($list, $email, $mode = self::SUBSCRIPTION_MODE_NON_DIGEST) {
-
-		/** Sanity Check */
-		$lists = $this->getLists();
-		if(!in_array($list, $lists)) {
-			throw new Exception("The list ${list} does not exist, you can't subscribe Members if the list doesn't exist.");
-		}
-		if(validateEmailAddress($email) === false) {
-			throw new Exception("The email ${email} is not a valid email address.");
-		}
-
-		/** log the Event */
-		$this->_logger->logEvent('SUBSCRIBE_MEMBER', "subscribeMember() been called with \$list='${list}', \$email='${email}', \$mode='${mode}'.", true);
-
-		/** Execute the shell command now to add the member */
-		$shellOutput = shell_exec("echo \"${email}\" | add_members ${mode} ${list}");
-
-		/** check the output for good result */
-		preg_match("#Subscribed: ${email}#", $shellOutput, $matches);
+	/** Find the pattern */
+	foreach($allMembers as $list => $members) {
+	    foreach($members as $member) {
+		/** preg_match this member */
+		preg_match($pattern, $member, $matches);
+		/** If there's any results Add it to big result array */
 		if(count($matches) > 0) {
-			$result = true;
-		} else {
-			$result = false;
+		    $foundPatterns[$list] = $member;
 		}
-
-		if($result === true) {
-			/** Add the member to the members list (faster than a re-read */
-			self::$_members[$list][] = $email;
-
-			/** log the Event */
-			$this->_logger->logEvent('SUBSCRIBE_MEMBER', "The member ${email} has been subscribed to the list ${list}.");
-		} else {
-			/** log the Event */
-			$this->_logger->logEvent('SUBSCRIBE_MEMBER', "The member ${email} has not been subscribed to the list ${list}, output: ${shellOutput}");
-		}
-
-		return $result;
+	    }
 	}
 
-	/**
-	 *  Unsubscribe members from a list
-	 *
-	 *  @param String $list  : The name of the mailing list for which we subscribe this user
-	 *  @param Array $emails : An array of emails to subscribe to mailing list
-	 *  @return bool True on sucess
-	 */
-	public function unsubscribeMembers($list, $emails) {
+	return $foundPatterns;
+    }
 
-		/** Initialize the result */
-		$result = true;
+    /**
+     *  Subscribe members to a list
+     *
+     *  @param String $list  : The name of the mailing list for which we subscribe this user
+     *  @param Array $emails : An array of emails to subscribe to mailing list
+     *  @param String $mode  : The subscription mode, can either be non-digest or digest, Default : non-digest
+     *  @return bool True on sucess
+     */
+    public function subscribeMembers($list, $emails, $mode = self::SUBSCRIPTION_MODE_NON_DIGEST) {
 
-		/** Iterate throught the emails adding them one by one */
-		foreach($emails as $email) {
-			$localResult = $this->unsubscribeMember($list, $email);
-			$result = $result && $localResult;
-		}
+	/** Initialize the result */
+	$result = true;
 
-		return $result;
+	/** Iterate throught the emails adding them one by one */
+	foreach($emails as $email) {
+	    $localResult = $this->subscribeMember($list, $email, $mode);
+	    $result = $result && $localResult;
 	}
 
-	/**
-	 *  Unsubscribe a member from a list
-	 *
-	 *  @param String $list  : The name of the mailing list for which we subscribe this user
-	 *  @param Array $email  : A string (email)
-	 *  @return bool True on sucess
-	 *  throws Exception
-	 */
-	public function unsubscribeMember($list, $email) {
+	return $result;
+    }
 
-		/** Sanity Check */
-		$lists = $this->getLists();
-		if(!in_array($list, $lists)) {
-			throw new Exception("The list ${list} does not exist, you can't unsubscribe Members if the list doesn't exist.");
-		}
-		if(validateEmailAddress($email) === false) {
-			throw new Exception("The email ${email} is not a valid email address.");
-		}
+    /**
+     *  Subscribe a member to a list
+     *
+     *  @param String $list  : The name of the mailing list for which we subscribe this user
+     *  @param Array $email  : A string (email)
+     *  @param String $mode  : The subscription mode, can either be non-digest or digest, Default : non-digest
+     *  @return bool True on sucess
+     *  throws Exception
+     */
+    public function subscribeMember($list, $email, $mode = self::SUBSCRIPTION_MODE_NON_DIGEST) {
 
-		/** log the Event */
-		$this->_logger->logEvent('UNSUBSCRIBE_MEMBER', "unsubscribeMember() been called with \$list='${list}', \$email='${email}'", true);
-
-		/** Execute the shell command now to remove the member */
-		$shellOutput = shell_exec("remove_members ${list} ${email}");
-
-		/** check the output for good result */
-		preg_match("#No such member: ${email}#", $shellOutput, $matches);
-		if(count($matches) > 0) {
-			$result = false;
-		} else {
-			$result = true;
-		}
-
-		if($result === true) {
-			/** Remove the member to the members list (faster than a re-read */
-			reset(self::$_members[$list]);
-			while(true) {
-				/** get the key of the current position in a array */
-				$key = key(self::$_members[$list]);
-
-				/** Get out of the loop if we reached the end */
-				if($key === null) {
-					break;
-				}
-
-				/** Remove the current key if the current value is the same as the email. */
-				if(current(self::$_members[$list]) == $email) {
-					unset(self::$_members[$list][$key]);
-					break;
-				} else { /** It doesn't match, go to the next one */
-					next(self::$_members[$list]);
-				}
-			}
-
-			/** log the Event */
-			$this->_logger->logEvent('UNSUBSCRIBE_MEMBER', "The member ${email} has been unsubscribed from the list ${list}.");
-		} else {
-			/** log the Event */
-			$this->_logger->logEvent('UNSUBSCRIBE_MEMBER', "The member ${email} has not been unsubscribed from the list ${list}, output: ${shellOutput}");
-		}
-
-		return $result;
+	/** Sanity Check */
+	$lists = $this->getLists();
+	if(!in_array($list, $lists)) {
+	    throw new Exception("The list ${list} does not exist, you can't subscribe Members if the list doesn't exist.");
 	}
+	if(validateEmailAddress($email) === false) {
+	    throw new Exception("The email ${email} is not a valid email address.");
+	}
+
+	/** log the Event */
+	$this->_logger->logEvent('SUBSCRIBE_MEMBER', "subscribeMember() been called with \$list='${list}', \$email='${email}', \$mode='${mode}'.", true);
+
+	/** Execute the shell command now to add the member */
+	$shellOutput = shell_exec("echo \"${email}\" | add_members ${mode} ${list}");
+
+	/** check the output for good result */
+	preg_match("#Subscribed: ${email}#", $shellOutput, $matches);
+	if(count($matches) > 0) {
+	    $result = true;
+	} else {
+	    $result = false;
+	}
+
+	if($result === true) {
+	    /** Add the member to the members list (faster than a re-read */
+	    self::$_members[$list][] = $email;
+
+	    /** log the Event */
+	    $this->_logger->logEvent('SUBSCRIBE_MEMBER', "The member ${email} has been subscribed to the list ${list}.");
+	} else {
+	    /** log the Event */
+	    $this->_logger->logEvent('SUBSCRIBE_MEMBER', "The member ${email} has not been subscribed to the list ${list}, output: ${shellOutput}");
+	}
+
+	return $result;
+    }
+
+    /**
+     *  Unsubscribe members from a list
+     *
+     *  @param String $list  : The name of the mailing list for which we subscribe this user
+     *  @param Array $emails : An array of emails to subscribe to mailing list
+     *  @return bool True on sucess
+     */
+    public function unsubscribeMembers($list, $emails) {
+
+	/** Initialize the result */
+	$result = true;
+
+	/** Iterate throught the emails adding them one by one */
+	foreach($emails as $email) {
+	    $localResult = $this->unsubscribeMember($list, $email);
+	    $result = $result && $localResult;
+	}
+
+	return $result;
+    }
+
+    /**
+     *  Unsubscribe a member from a list
+     *
+     *  @param String $list  : The name of the mailing list for which we subscribe this user
+     *  @param Array $email  : A string (email)
+     *  @return bool True on sucess
+     *  throws Exception
+     */
+    public function unsubscribeMember($list, $email) {
+
+	/** Sanity Check */
+	$lists = $this->getLists();
+	if(!in_array($list, $lists)) {
+	    throw new Exception("The list ${list} does not exist, you can't unsubscribe Members if the list doesn't exist.");
+	}
+	if(validateEmailAddress($email) === false) {
+	    throw new Exception("The email ${email} is not a valid email address.");
+	}
+
+	/** log the Event */
+	$this->_logger->logEvent('UNSUBSCRIBE_MEMBER', "unsubscribeMember() been called with \$list='${list}', \$email='${email}'", true);
+
+	/** Execute the shell command now to remove the member */
+	$shellOutput = shell_exec("remove_members ${list} ${email}");
+
+	/** check the output for good result */
+	preg_match("#No such member: ${email}#", $shellOutput, $matches);
+	if(count($matches) > 0) {
+	    $result = false;
+	} else {
+	    $result = true;
+	}
+
+	if($result === true) {
+	    /** Remove the member to the members list (faster than a re-read */
+	    reset(self::$_members[$list]);
+	    while(true) {
+		/** get the key of the current position in a array */
+		$key = key(self::$_members[$list]);
+
+		/** Get out of the loop if we reached the end */
+		if($key === null) {
+		    break;
+		}
+
+		/** Remove the current key if the current value is the same as the email. */
+		if(current(self::$_members[$list]) == $email) {
+		    unset(self::$_members[$list][$key]);
+		    break;
+		} else { /** It doesn't match, go to the next one */
+		    next(self::$_members[$list]);
+		}
+	    }
+
+	    /** log the Event */
+	    $this->_logger->logEvent('UNSUBSCRIBE_MEMBER', "The member ${email} has been unsubscribed from the list ${list}.");
+	} else {
+	    /** log the Event */
+	    $this->_logger->logEvent('UNSUBSCRIBE_MEMBER', "The member ${email} has not been unsubscribed from the list ${list}, output: ${shellOutput}");
+	}
+
+	return $result;
+    }
 }
 
 ?>

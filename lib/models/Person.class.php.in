@@ -26,348 +26,348 @@ defined('AUTOSYNCML') or die("You cannot use this file, please use @BINDIR@/auto
 
 class Person extends phpDataMapper_Entity {
 
-	/** The logger */
-	protected $_logger;
+    /** The logger */
+    protected $_logger;
 
-	/** Is the data valid */
-	protected $_validData = false;
+    /** Is the data valid */
+    protected $_validData = false;
 
-	/** The black listed lists */
-	protected $_blackListedLists = array(
-		'00',
-		'99',
-	);
+    /** The black listed lists */
+    protected $_blackListedLists = array(
+	    '00',
+	    '99',
+    );
 
-	/** The fields */
-	protected $_fields = null;
+    /** The fields */
+    protected $_fields = null;
 
-	/**
-	 * Constructor function
-	 */
-	public function __construct($data = null) {
+    /**
+     * Constructor function
+     */
+    public function __construct($data = null) {
 
-		/** Send the info to the parent class */
-		parent::__construct($data);
+	/** Send the info to the parent class */
+	parent::__construct($data);
 
-		/** Get the logger */
-		$this->_logger = Logger::getInstance();
+	/** Get the logger */
+	$this->_logger = Logger::getInstance();
 
-		/** Logging a create person */
-		if(!empty($this->Ad_Email)) {
-			$this->_logger->logEvent('CREATE_PERSON', 'The person ' . $this->Ad_Email . ' has just been created', true);
-		}
+	/** Logging a create person */
+	if(!empty($this->Ad_Email)) {
+	    $this->_logger->logEvent('CREATE_PERSON', 'The person ' . $this->Ad_Email . ' has just been created', true);
+	}
+    }
+
+    public function fields() {
+
+	if($this->_fields === null) {
+	    /** Initalize the fields array */
+	    $fields = array();
+
+	    /** Iterate over the data and have the fields ready */
+	    foreach($this->_data as $field => $value) {
+		$fields[] = $field;
+	    }
+
+	    /** Record the fields */
+	    $this->_fields = $fields;
 	}
 
-	public function fields() {
+	return $this->_fields;
+    }
 
-		if($this->_fields === null) {
-			/** Initalize the fields array */
-			$fields = array();
+    public function copyProperties(Person $person) {
 
-			/** Iterate over the data and have the fields ready */
-			foreach($this->_data as $field => $value) {
-				$fields[] = $field;
+
+	/** Iterate on the fields and set the value of this from the value inside person */
+	foreach($person->fields() as $field) {
+	    $this->$field = $person->$field;
+	}
+    }
+
+    /**
+     * This function validated the data, throws exception where it's necessary
+     *
+     * @return void
+     * @throws InvalidProperty
+     */
+    protected function validateData() {
+
+	if($this->_validData === true) {
+	    return;
+	}
+
+	/** Create a new instance of the departments class */
+	$departments = new Departements();
+
+	if(empty($this->Ad_ID)) {
+	    throw new InvalidPropertyException("Ad_ID", "The id can't be empty!");
+	}
+
+	if(empty($this->Ad_Prenom)) {
+	    throw new InvalidPropertyException("Ad_Prenom", "The firstName can't be empty");
+	}
+
+	if(empty($this->Ad_Nom)) {
+	    throw new InvalidPropertyException("Ad_Nom", "The lastName can't be empty");
+	}
+
+	if(empty($this->Ad_Email)) {
+	    throw new InvalidPropertyException("Ad_Email", "The email can't be empty");
+	} elseif(validateEmailAddress($this->Ad_Email) === false) {
+	    throw new InvalidPropertyException("Ad_Email", "The email " . $this->Ad_Email . " is not a valid email address.");
+	}
+
+	if(empty($this->Ad_Code)) {
+	    throw new InvalidPropertyException("Ad_Code", "The postal code can't be empty");
+	} elseif($departments->checkPostCode($this->Ad_Code) === false) {
+	    throw new InvalidPropertyException("Ad_Code", "The postal code " . $this->Ad_Code . " is not a valid postal code.");
+	}
+
+	/** Mark the data as valid (at this point) */
+	$this->_validData = true;
+    }
+
+    public function getCurrentList() {
+
+	/** Validate the data */
+	$this->validateData();
+
+	$mailman = Mailman::getInstance();
+	$matches = $mailman->find('#' . mb_strtolower($this->Ad_Email, 'UTF-8') . '#');
+
+	return $matches;
+    }
+
+    public function getLists() {
+
+	/** Validate the data */
+	$this->validateData();
+
+	/** Get the Registry instance */
+	$registry = Registry::getInstance();
+
+	/** get the config */
+	$config = $registry->get('config');
+
+	/** Initialize the lists */
+	$lists = $config->default_mls;
+
+	/** get the list by zip code */
+	$list = $this->_getListByPostCode();
+	if(!empty($list)) {
+	    $lists[] = $list;
+	}
+
+	/** get the list by speciality */
+	$list = $this->_getListBySpeciality();
+	if(!empty($list)) {
+	    $lists[] = $list;
+	}
+
+	/** Finally get the special mls */
+	$list = $this->_getListSpecialList();
+	if(!empty($list)) {
+	    $lists = array_merge($lists, $list);
+	}
+
+	return $lists;
+    }
+
+    /**
+     * Get the special list
+     *
+     * @return Array
+     */
+    protected function _getListSpecialList() {
+
+	/** Get the Registry instance */
+	$registry = Registry::getInstance();
+
+	/** get the config */
+	$config = $registry->get('config');
+
+	/** Initialize the result array */
+	$lists = array();
+
+	/** get the special_ml */
+	$special_mls = $config->special_mls;
+
+	/** Generate the special mls */
+	if(!empty($special_mls)) {
+	    /** Get the number of lists */
+	    $special_ml_count = count($special_mls['names']);
+
+	    /** Check which list this user gets */
+	    for($i = 0; $i < $special_ml_count; $i++) {
+		$list_name = trim($special_mls['names'][$i]);
+		$departments = explode(',', $special_mls['departments'][$i]);
+		$countries = explode(',', $special_mls['countries'][$i]);
+		$not_countries = explode(',', $special_mls['not_countries'][$i]);
+
+		foreach($departments as &$department) {
+		    /** Trim the department */
+		    $department = trim($department);
+
+		    /** If the department doesn't match continue */
+		    if($this->_getDepartment() != $department)
+			continue;
+
+		    /** If the countries and not_countries are empty, count this list in */
+		    if($this->_doesArrayHasValidElements($countries) === false && $this->_doesArrayHasValidElements($not_countries) === false) {
+			$this->_logger->logEvent('ADD_SPECIAL_LIST', "The user " . $this->Ad_Email . " has been added to the special list " . $list_name, true);
+			$lists[] = $list_name;
+			continue;
+		    }
+
+		    /** Check for the country matches */
+		    if($this->_doesArrayHasValidElements($countries) === true) {
+			foreach($countries as &$country) {
+			    /** Trim the country */
+			    $country = trim($country);
+
+			    /** If the country matches, count this list in */
+			    if($country == $this->Ad_Pays) {
+				$this->_logger->logEvent('ADD_SPECIAL_LIST', "The user " . $this->Ad_Email . " has been added to the special list " . $list_name, true);
+				$lists[] = $list_name;
+				continue 2;
+			    }
 			}
 
-			/** Record the fields */
-			$this->_fields = $fields;
-		}
+			/** If we're here, then it didn't match any country, go to the next list */
+			continue;
+		    }
 
-		return $this->_fields;
-	}
+		    /** Check for the non-country matches */
+		    if($this->_doesArrayHasValidElements($not_countries) === true) {
+			foreach($not_countries as &$not_country) {
+			    /** Trim the not_country */
+			    $not_country = trim($not_country);
 
-	public function copyProperties(Person $person) {
-
-
-		/** Iterate on the fields and set the value of this from the value inside person */
-		foreach($person->fields() as $field) {
-			$this->$field = $person->$field;
-		}
-	}
-
-	/**
-	 * This function validated the data, throws exception where it's necessary
-	 *
-	 * @return void
-	 * @throws InvalidProperty
-	 */
-	protected function validateData() {
-
-		if($this->_validData === true) {
-			return;
-		}
-
-		/** Create a new instance of the departments class */
-		$departments = new Departements();
-
-		if(empty($this->Ad_ID)) {
-			throw new InvalidPropertyException("Ad_ID", "The id can't be empty!");
-		}
-
-		if(empty($this->Ad_Prenom)) {
-			throw new InvalidPropertyException("Ad_Prenom", "The firstName can't be empty");
-		}
-
-		if(empty($this->Ad_Nom)) {
-			throw new InvalidPropertyException("Ad_Nom", "The lastName can't be empty");
-		}
-
-		if(empty($this->Ad_Email)) {
-			throw new InvalidPropertyException("Ad_Email", "The email can't be empty");
-		} elseif(validateEmailAddress($this->Ad_Email) === false) {
-			throw new InvalidPropertyException("Ad_Email", "The email " . $this->Ad_Email . " is not a valid email address.");
-		}
-
-		if(empty($this->Ad_Code)) {
-			throw new InvalidPropertyException("Ad_Code", "The postal code can't be empty");
-		} elseif($departments->checkPostCode($this->Ad_Code) === false) {
-			throw new InvalidPropertyException("Ad_Code", "The postal code " . $this->Ad_Code . " is not a valid postal code.");
-		}
-
-		/** Mark the data as valid (at this point) */
-		$this->_validData = true;
-	}
-
-	public function getCurrentList() {
-
-		/** Validate the data */
-		$this->validateData();
-
-		$mailman = Mailman::getInstance();
-		$matches = $mailman->find('#' . mb_strtolower($this->Ad_Email, 'UTF-8') . '#');
-
-		return $matches;
-	}
-
-	public function getLists() {
-
-		/** Validate the data */
-		$this->validateData();
-
-		/** Get the Registry instance */
-		$registry = Registry::getInstance();
-
-		/** get the config */
-		$config = $registry->get('config');
-
-		/** Initialize the lists */
-		$lists = $config->default_mls;
-
-		/** get the list by zip code */
-		$list = $this->_getListByPostCode();
-		if(!empty($list)) {
-			$lists[] = $list;
-		}
-
-		/** get the list by speciality */
-		$list = $this->_getListBySpeciality();
-		if(!empty($list)) {
-			$lists[] = $list;
-		}
-
-		/** Finally get the special mls */
-		$list = $this->_getListSpecialList();
-		if(!empty($list)) {
-			$lists = array_merge($lists, $list);
-		}
-
-		return $lists;
-	}
-
-	/**
-	 * Get the special list
-	 *
-	 * @return Array
-	 */
-	protected function _getListSpecialList() {
-
-		/** Get the Registry instance */
-		$registry = Registry::getInstance();
-
-		/** get the config */
-		$config = $registry->get('config');
-
-		/** Initialize the result array */
-		$lists = array();
-
-		/** get the special_ml */
-		$special_mls = $config->special_mls;
-
-		/** Generate the special mls */
-		if(!empty($special_mls)) {
-			/** Get the number of lists */
-			$special_ml_count = count($special_mls['names']);
-
-			/** Check which list this user gets */
-			for($i = 0; $i < $special_ml_count; $i++) {
-				$list_name = trim($special_mls['names'][$i]);
-				$departments = explode(',', $special_mls['departments'][$i]);
-				$countries = explode(',', $special_mls['countries'][$i]);
-				$not_countries = explode(',', $special_mls['not_countries'][$i]);
-
-				foreach($departments as &$department) {
-					/** Trim the department */
-					$department = trim($department);
-
-					/** If the department doesn't match continue */
-					if($this->_getDepartment() != $department)
-						continue;
-
-					/** If the countries and not_countries are empty, count this list in */
-					if($this->_doesArrayHasValidElements($countries) === false && $this->_doesArrayHasValidElements($not_countries) === false) {
-						$this->_logger->logEvent('ADD_SPECIAL_LIST', "The user " . $this->Ad_Email . " has been added to the special list " . $list_name, true);
-						$lists[] = $list_name;
-						continue;
-					}
-
-					/** Check for the country matches */
-					if($this->_doesArrayHasValidElements($countries) === true) {
-						foreach($countries as &$country) {
-							/** Trim the country */
-							$country = trim($country);
-
-							/** If the country matches, count this list in */
-							if($country == $this->Ad_Pays) {
-								$this->_logger->logEvent('ADD_SPECIAL_LIST', "The user " . $this->Ad_Email . " has been added to the special list " . $list_name, true);
-								$lists[] = $list_name;
-								continue 2;
-							}
-						}
-
-						/** If we're here, then it didn't match any country, go to the next list */
-						continue;
-					}
-
-					/** Check for the non-country matches */
-					if($this->_doesArrayHasValidElements($not_countries) === true) {
-						foreach($not_countries as &$not_country) {
-							/** Trim the not_country */
-							$not_country = trim($not_country);
-
-							/** If the country doesn't match, count this list in */
-							if($not_country != $this->Ad_Pays) {
-								$this->_logger->logEvent('ADD_SPECIAL_LIST', "The user " . $this->Ad_Email . " has been added to the special list " . $list_name, true);
-								$lists[] = $list_name;
-								continue 2;
-							}
-						}
-
-						/** If we're here, then it didn't match any not_country, go to the next list */
-						continue;
-					}
-				}
+			    /** If the country doesn't match, count this list in */
+			    if($not_country != $this->Ad_Pays) {
+				$this->_logger->logEvent('ADD_SPECIAL_LIST', "The user " . $this->Ad_Email . " has been added to the special list " . $list_name, true);
+				$lists[] = $list_name;
+				continue 2;
+			    }
 			}
+
+			/** If we're here, then it didn't match any not_country, go to the next list */
+			continue;
+		    }
 		}
-
-		return $lists;
+	    }
 	}
 
-	protected function _doesArrayHasValidElements($array) {
+	return $lists;
+    }
 
-		/** Initialize the result */
-		$result = false;
+    protected function _doesArrayHasValidElements($array) {
 
-		/** Iterate on the array and find out if there's any data */
-		foreach($array as $element) {
-			if(empty($element) === false) {
-				$result = true;
-				break;
-			}
+	/** Initialize the result */
+	$result = false;
+
+	/** Iterate on the array and find out if there's any data */
+	foreach($array as $element) {
+	    if(empty($element) === false) {
+		$result = true;
+		break;
+	    }
+	}
+
+	return $result;
+    }
+
+
+
+    /**
+     * This function return the list based on the zip code
+     *
+     * @return String | Int
+     */
+    protected function _getListByPostCode() {
+
+	/** Validate the data */
+	$this->validateData();
+
+	/** get the list */
+	$list = $this->_getDepartment();
+
+	/** Some lists are black-listed */
+	if(in_array($list, $this->_blackListedLists))
+	    $list = null;
+
+	return $list;
+    }
+
+    protected function _getDepartment() {
+
+	/** Create a new instance of the departments class */
+	$departments = new Departements();
+
+	/** get the list */
+	$department = $departments->getDepartementCodeByZipCode($this->Ad_Code);
+
+	return $department;
+    }
+
+    /**
+     * This function return the list based on this person speciality
+     *
+     * @return String | null
+     */
+    protected function _getListBySpeciality() {
+
+	/** Validate the data */
+	$this->validateData();
+
+	/** Initialize the list */
+	$list = null;
+
+	switch($this->Ad_Specialite) {
+	    case 'Informatique':
+		$list = 'Informaticiens';
+		break;
+	}
+
+	return $list;
+    }
+
+    /**
+     * This function ensure that this user is subscribed to and only to the calculated lists using $this->getLists()
+     *
+     * @return void
+     */
+    public function ensureSubscriptions($currentSubscriptions = null) {
+
+	/** Validate the data */
+	$this->validateData();
+
+	/** Get an instance of the Mailman class */
+	$mailman = Mailman::getInstance();
+
+	/** The lists the user should be subscribed to */
+	$lists = $this->getLists();
+
+	/** If the current Subscriptions is not null, un-subscribe the user from anything other than where he supposed to be */
+	if($currentSubscriptions !== null && is_array($currentSubscriptions)) {
+	    foreach($currentSubscriptions as $currentSubscription) {
+		if(in_array($currentSubscription, $lists) === false) {
+		    $this->_logger->logEvent('UNSUBSCRIBE_USER', "Unsubscribing the user from the list ${currentSubscription}", true);
+		    $mailman->unsubscribeMember($currentSubscription, $this->Ad_Email);
 		}
-
-		return $result;
+	    }
 	}
 
-
-
-	/**
-	 * This function return the list based on the zip code
-	 *
-	 * @return String | Int
-	 */
-	protected function _getListByPostCode() {
-
-		/** Validate the data */
-		$this->validateData();
-
-		/** get the list */
-		$list = $this->_getDepartment();
-
-		/** Some lists are black-listed */
-		if(in_array($list, $this->_blackListedLists))
-			$list = null;
-
-		return $list;
+	/** Subscribe this member */
+	foreach($lists as $list) {
+	    if($currentSubscriptions === null || (is_array($currentSubscriptions) && in_array($list, $currentSubscriptions) === false)) {
+		$mailman->subscribeMember($list, $this->Ad_Email);
+	    } else {
+		$this->_logger->logEvent('SUBSCRIBE_USER', "The user " . $this->Ad_Email . " has been skiped, he's already subscribed to the list ${list}", true);
+	    }
 	}
-
-	protected function _getDepartment() {
-
-		/** Create a new instance of the departments class */
-		$departments = new Departements();
-
-		/** get the list */
-		$department = $departments->getDepartementCodeByZipCode($this->Ad_Code);
-
-		return $department;
-	}
-
-	/**
-	 * This function return the list based on this person speciality
-	 *
-	 * @return String | null
-	 */
-	protected function _getListBySpeciality() {
-
-		/** Validate the data */
-		$this->validateData();
-
-		/** Initialize the list */
-		$list = null;
-
-		switch($this->Ad_Specialite) {
-		case 'Informatique':
-			$list = 'Informaticiens';
-			break;
-		}
-
-		return $list;
-	}
-
-	/**
-	 * This function ensure that this user is subscribed to and only to the calculated lists using $this->getLists()
-	 *
-	 * @return void
-	 */
-	public function ensureSubscriptions($currentSubscriptions = null) {
-
-		/** Validate the data */
-		$this->validateData();
-
-		/** Get an instance of the Mailman class */
-		$mailman = Mailman::getInstance();
-
-		/** The lists the user should be subscribed to */
-		$lists = $this->getLists();
-
-		/** If the current Subscriptions is not null, un-subscribe the user from anything other than where he supposed to be */
-		if($currentSubscriptions !== null && is_array($currentSubscriptions)) {
-			foreach($currentSubscriptions as $currentSubscription) {
-				if(in_array($currentSubscription, $lists) === false) {
-					$this->_logger->logEvent('UNSUBSCRIBE_USER', "Unsubscribing the user from the list ${currentSubscription}", true);
-					$mailman->unsubscribeMember($currentSubscription, $this->Ad_Email);
-				}
-			}
-		}
-
-		/** Subscribe this member */
-		foreach($lists as $list) {
-			if($currentSubscriptions === null || (is_array($currentSubscriptions) && in_array($list, $currentSubscriptions) === false)) {
-				$mailman->subscribeMember($list, $this->Ad_Email);
-			} else {
-				$this->_logger->logEvent('SUBSCRIBE_USER', "The user " . $this->Ad_Email . " has been skiped, he's already subscribed to the list ${list}", true);
-			}
-		}
-	}
+    }
 }
 
 ?>

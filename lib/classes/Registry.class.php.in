@@ -30,94 +30,94 @@ defined('AUTOSYNCML') or die("You cannot use this file, please use @BINDIR@/auto
  */
 class Registry extends ArrayObject {
 
-	/** class name */
-	protected static $_className = 'Registry';
+    /** class name */
+    protected static $_className = 'Registry';
 
-	/** The registry instance */
-	protected static $_instance = null;
+    /** The registry instance */
+    protected static $_instance = null;
 
-	/** The log instance */
-	protected static $_logger = null;
+    /** The log instance */
+    protected static $_logger = null;
 
 
-	/**
-	 * Constructs a parent ArrayObject with default
-	 * ARRAY_AS_PROPS to allow acces as an object
-	 *
-	 * @param array $array data array
-	 * @param integer $flags ArrayObject flags
-	 */
-	public function __construct($array = array(), $flags = parent::ARRAY_AS_PROPS) {
+    /**
+     * Constructs a parent ArrayObject with default
+     * ARRAY_AS_PROPS to allow acces as an object
+     *
+     * @param array $array data array
+     * @param integer $flags ArrayObject flags
+     */
+    public function __construct($array = array(), $flags = parent::ARRAY_AS_PROPS) {
 
-		/** Get the log */
-		$this->_logger = Logger::getInstance();
+	/** Get the log */
+	$this->_logger = Logger::getInstance();
 
-		/** Log the creation of an object */
-		$this->_logger->logEvent('NEW_INSTANCE', 'REGISTRY CLASS', true);
+	/** Log the creation of an object */
+	$this->_logger->logEvent('NEW_INSTANCE', 'REGISTRY CLASS', true);
 
-		/** Send the options back to the parent class */
-		parent::__construct($array, $flags);
+	/** Send the options back to the parent class */
+	parent::__construct($array, $flags);
+    }
+
+    /** Destructor */
+    public function __destruct() {
+
+	/** Log the destruction of an object */
+	$this->_logger->logEvent('REMOVE_INSTANCE', 'REGISTRY CLASS', true);
+    }
+
+    /**
+     * This function return the only instance of this class, create one if no instance exists
+     *
+     * @return Registry
+     */
+    public static function getInstance() {
+
+	if(self::$_instance === null || !(self::$_instance instanceof self::$_className)) {
+	    self::$_instance = new self::$_className();
 	}
 
-	/** Destructor */
-	public function __destruct() {
+	return self::$_instance;
+    }
 
-		/** Log the destruction of an object */
-		$this->_logger->logEvent('REMOVE_INSTANCE', 'REGISTRY CLASS', true);
+    /**
+     * getter method, basically same as offsetGet().
+     *
+     * This method can be called from an object of type Registry, or it
+     * can be called statically.  In the latter case, it uses the default
+     * static instance stored in the class.
+     *
+     * @param string $index - get the value associated with $index
+     * @return mixed
+     * @throws NoEntryException if no entry is registerd for $index.
+     */
+    public static function get($index) {
+
+	$instance = self::getInstance();
+
+	if (!$instance->offsetExists($index)) {
+	    throw new NoEntryException("No entry is registered for key '$index' in the registry");
 	}
 
-	/**
-	 * This function return the only instance of this class, create one if no instance exists
-	 *
-	 * @return Registry
-	 */
-	public static function getInstance() {
+	return $instance->offsetGet($index);
+    }
 
-		if(self::$_instance === null || !(self::$_instance instanceof self::$_className)) {
-			self::$_instance = new self::$_className();
-		}
+    /**
+     * setter method, basically same as offsetSet().
+     *
+     * This method can be called from an object of type Registry, or it
+     * can be called statically.  In the latter case, it uses the default
+     * static instance stored in the class.
+     *
+     * @param string $index The location in the ArrayObject in which to store the value.
+     * @param mixed $value The object to store in the ArrayObject.
+     * @return void
+     */
+    public static function set($index, $value) {
 
-		return self::$_instance;
-	}
-
-	/**
-	 * getter method, basically same as offsetGet().
-	 *
-	 * This method can be called from an object of type Registry, or it
-	 * can be called statically.  In the latter case, it uses the default
-	 * static instance stored in the class.
-	 *
-	 * @param string $index - get the value associated with $index
-	 * @return mixed
-	 * @throws NoEntryException if no entry is registerd for $index.
-	 */
-	public static function get($index) {
-
-		$instance = self::getInstance();
-
-		if (!$instance->offsetExists($index)) {
-			throw new NoEntryException("No entry is registered for key '$index' in the registry");
-		}
-
-		return $instance->offsetGet($index);
-	}
-
-	/**
-	 * setter method, basically same as offsetSet().
-	 *
-	 * This method can be called from an object of type Registry, or it
-	 * can be called statically.  In the latter case, it uses the default
-	 * static instance stored in the class.
-	 *
-	 * @param string $index The location in the ArrayObject in which to store the value.
-	 * @param mixed $value The object to store in the ArrayObject.
-	 * @return void
-	 */
-	public static function set($index, $value) {
-
-		$instance = self::getInstance();
-		$instance->offsetSet($index, $value);
-	}
+	$instance = self::getInstance();
+	$instance->offsetSet($index, $value);
+    }
 
 }
 
